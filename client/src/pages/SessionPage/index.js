@@ -24,23 +24,20 @@ class MainPage extends Component {
     const { page, login, sessionId } = this.props;
     const url = `${window.location.origin}/${sessionId}`;
     return (
-      page === 'main' &&
+      page === 'session' &&
       <div className="container">
+        {
+          sessionId &&
+          <div>Сесія: {sessionId}</div>
+        }
         <Form onSubmit={this.handleStartSession}>
           <Form.Group>
             <Form.Field>
-              <Input label="Ім'я ведучого:" type="text" value={login} onChange={this.handleChange('data.login')} />
+              <Input label="Ім'я гравця:" type="text" value={login} onChange={this.handleChange('data.login')} />
             </Form.Field>
-            <Button type="submit" color="green" disabled={!!sessionId}>Створити сесію</Button>
+            <Button type="submit" color="green" disabled={!!login}>Приєднатися до сесії</Button>
           </Form.Group>
         </Form>
-        {
-          sessionId &&
-          <div>
-            <div>Посилання для гравців:</div>
-            <a href={url} target="_blank">{url}</a>
-          </div>
-        }
       </div>
     );
   }

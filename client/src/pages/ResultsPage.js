@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "@cerebral/react";
-import { state, signal } from 'cerebral/tags';
+import { state, sequences } from 'cerebral/tags';
 import PageWithTransition from 'components/PageWithTransition';
 import injectSheet from 'react-jss';
 
@@ -56,7 +56,7 @@ export default connect(
     game: state`data.game`,
     users: state`data.users`,
     player2Index: state`data.player2Index`,
-    start: signal`start`,
+    start: sequences`start`,
   },
   injectSheet(styles)(ResultsPage),
 );

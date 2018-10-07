@@ -1,4 +1,23 @@
+export const ws = {
+  comp: null,
+};
 
+export function createSession({ props }) {
+  // ws.comp.sendMessage({ login: props.login })
+  ws.comp.send(JSON.stringify({
+    action: 'createSession',
+    payload: {
+      login: props.login,
+    },
+  }));
+}
+
+export function serverMessage({ state, props }) {
+  const { action, payload } = props;
+  state.set(`data.isObserver`, true);
+  state.set(`data.token`, payload.token);
+  state.set(`data.sessionId`, payload.id);
+}
 
 
 //////////////////////////////////////////////////////

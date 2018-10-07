@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import { connect } from "@cerebral/react";
-import { state, signal } from 'cerebral/tags';
+import { state, sequences } from 'cerebral/tags';
 import injectSheet from 'react-jss';
 
 const styles = {
@@ -54,8 +54,8 @@ class Controls extends Component {
 export default connect(
   {
     turnParams: state`turnParams`,
-    updateField: signal`updateField`,
-    newTurn: signal`newTurn`,
+    updateField: sequences`updateField`,
+    newTurn: sequences`newTurn`,
   },
   injectSheet(styles)(Controls),
 );

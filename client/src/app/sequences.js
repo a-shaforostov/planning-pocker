@@ -1,15 +1,37 @@
-import { set, when, wait } from "cerebral/operators";
 // import { resetForm } from '@cerebral/forms/operators';
-import { props, state } from "cerebral/tags";
+import { props, state } from 'cerebral/tags';
 import * as factories from "./factories";
 import * as actions from "./actions";
+import { set } from 'cerebral/factories'
+
+export const rootRouted = [
+  set(state`data.page`, 'main'),
+  set(state`data.isObserver`, false),
+  set(state`data.login`, null),
+  set(state`data.sessionId`, null),
+  set(state`data.token`, null),
+];
+
+export const playerRouted = [
+  set(state`data.page`, 'session'),
+  set(state`data.isObserver`, false),
+  set(state`data.login`, null),
+  set(state`data.sessionId`, props`params.id`),
+  set(state`data.token`, null),
+];
+
+export const createSession = [
+  actions.createSession,
+];
+
+export const updateField = set(state`${props`path`}`, props`value`);
 
 
+export const serverMessage = [
+  actions.serverMessage,
+];
 
-
-
-
-
+export const updateIsConnected = set(state`data.isConnected`, props`value`);
 
 
 // /* Routes */
@@ -30,7 +52,6 @@ import * as actions from "./actions";
 //
 // /* Form processing */
 // export const showModal = set(state`env.${props`name`}.edit`, props`show`);
-// export const updateField = set(state`${props`path`}`, props`value`);
 // export const updateName = actions.updateName;
 // export const resetEditForm = resetForm(state`${props`form`}`);
 //

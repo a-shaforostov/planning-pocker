@@ -1,0 +1,14 @@
+.wrapper {
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    width: 440px;
+    min-width: 440px;
+    max-width: 960px;
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+}

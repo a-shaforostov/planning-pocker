@@ -5,30 +5,31 @@
 
 import React, { Component } from 'react';
 import { connect } from "@cerebral/react";
-import {  signal } from 'cerebral/tags';
-import { Container } from '@cerebral/react';
+import { state, signal } from 'cerebral/tags';
 
+import './Application.css';
+import WebSocketProvider from '../WebSocketProvider';
 import MainPage from 'pages/MainPage';
+import SessionPage from 'pages/SessionPage';
 // import GamePage from 'pages/GamePage';
 // import ResultsPage from 'pages/ResultsPage';
-import controller from "../../controller";
 
 class Application extends Component {
   render() {
-    const { classes } = this.props;
+    const { isConnected } = this.props;
     return (
-      <Container controller={controller}>
-        <div className={classes.container}>
-          <MainPage />
-        </div>
-      </Container>
+      <div className="container">
+        <h1>Planning poker <WebSocketProvider /></h1>
+        <MainPage />
+        <SessionPage />
+      </div>
     )
   }
 }
 
 export default connect(
   {
-    // applicationLoaded: signal`applicationLoaded`,
+    // applicationLoaded: sequences`applicationLoaded`,
   },
   Application,
 );

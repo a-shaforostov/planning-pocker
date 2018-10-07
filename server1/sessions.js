@@ -5,14 +5,16 @@ const salt = '72rt81btcv723vx111b73rvc871bx36';
 class Sessions {
   constructor() {
     this.pool = [];
+    this.connections = {};
   }
 
-  createSession(opt) {
+  createSession(connectionId, opt) {
     const id = uuidv1();
     const token = sha1(salt + id);
     this.pool.push({
       observer: {
         name: opt.login,
+        connectionId,
         token,
       },
       players: [],
@@ -27,6 +29,19 @@ class Sessions {
 
   getSession(id) {
     return this.pool.find(item => item.id === id);
+  }
+
+  addConnection(ws) {
+    ws.id = uuidv1();
+    this.connections[ws.id] = ws;
+  }
+
+  removeConnection(id) {
+    delete this.connections[id];
+  }
+
+  getConnectionsSize() {
+    return Object.keys(this.connections).length;
   }
 }
 
