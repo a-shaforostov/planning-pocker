@@ -9,19 +9,21 @@ import { state, signal } from 'cerebral/tags';
 import { Button, Form, Input, Label } from 'semantic-ui-react'
 import router from '../../app/router';
 
+import Playground from '../../components/Playground';
+
 class MainPage extends Component {
   handleChange = path => e => {
     this.props.updateField({ path, value: e.target.value });
   };
 
-  handleStartSession = e => {
+  handleJoinSession = e => {
     e.preventDefault();
-    const { login } = this.props;
-    this.props.createSession({ login });
+    const { joinSession, login } = this.props;
+    joinSession({ login });
   };
 
   render() {
-    const { page, login, sessionId } = this.props;
+    const { page, login, sessionId, auth, isConnected, error } = this.props;
     const url = `${window.location.origin}/${sessionId}`;
     return (
       page === 'session' &&
@@ -30,14 +32,19 @@ class MainPage extends Component {
           sessionId &&
           <div>Сесія: {sessionId}</div>
         }
-        <Form onSubmit={this.handleStartSession}>
+        <Form onSubmit={this.handleJoinSession}>
           <Form.Group>
             <Form.Field>
               <Input label="Ім'я гравця:" type="text" value={login} onChange={this.handleChange('data.login')} />
             </Form.Field>
-            <Button type="submit" color="green" disabled={!!login}>Приєднатися до сесії</Button>
+            <Button type="submit" color="green" disabled={auth || !isConnected || !login}>Приєднатися до сесії</Button>
           </Form.Group>
         </Form>
+        {
+          error &&
+          <div className="error" style={{ color: 'red' }}>{error}</div>
+        }
+        <Playground />
       </div>
     );
   }
@@ -47,9 +54,12 @@ export default connect(
   {
     page: state`data.page`,
     login: state`data.login`,
+    auth: state`data.auth`,
+    isConnected: state`data.isConnected`,
+    error: state`data.error`,
     sessionId: state`data.sessionId`,
     // player2Index: state`data.player2Index`,
-    createSession: signal`createSession`,
+    joinSession: signal`joinSession`,
     updateField: signal`updateField`,
     // updateName: sequences`updateName`,
     // newGame: sequences`newGame`,

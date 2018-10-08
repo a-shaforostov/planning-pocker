@@ -10,6 +10,8 @@ const wss = new WebSocket.Server({
   port: 3002
 });
 
+const wsHandlers = require('./wsHandlers')(wss);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -42,11 +44,5 @@ app.listen(process.env.PORT || '3000');
 function processMessage(message) {
   console.log(message);
   const { action, payload } = JSON.parse(message);
-  if (action === 'createSession') {
-    const s = sessions.createSession(this.id, payload);
-    this.send(JSON.stringify({
-      action: 'newSession',
-      payload: s,
-    }));
-  }
+  wsHandlers[action](this, payload);
 }

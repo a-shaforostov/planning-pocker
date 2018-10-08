@@ -37,6 +37,7 @@ export default ({ app }) => {
         sessionId: null,
         token: null,
         isConnected: false,
+        auth: false,
       },
     },
     signals: {
@@ -44,6 +45,7 @@ export default ({ app }) => {
       playerRouted: route('/:id', sequences.playerRouted), // Підключення гравців
 
       createSession: sequences.createSession,
+      joinSession: sequences.joinSession,
       updateField: sequences.updateField,
       serverMessage: sequences.serverMessage,
       updateIsConnected: sequences.updateIsConnected,

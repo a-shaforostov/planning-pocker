@@ -24,6 +24,10 @@ export const createSession = [
   actions.createSession,
 ];
 
+export const joinSession = [
+  actions.joinSession,
+];
+
 export const updateField = set(state`${props`path`}`, props`value`);
 
 

@@ -1,9 +1,10 @@
+import * as wsHandlers from './wsHandlers';
+
 export const ws = {
   comp: null,
 };
 
 export function createSession({ props }) {
-  // ws.comp.sendMessage({ login: props.login })
   ws.comp.send(JSON.stringify({
     action: 'createSession',
     payload: {
@@ -12,11 +13,19 @@ export function createSession({ props }) {
   }));
 }
 
-export function serverMessage({ state, props }) {
-  const { action, payload } = props;
-  state.set(`data.isObserver`, true);
-  state.set(`data.token`, payload.token);
-  state.set(`data.sessionId`, payload.id);
+export function joinSession({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'joinSession',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      login: props.login,
+    },
+  }));
+}
+
+export function serverMessage(context) {
+  const { action, payload } = context.props;
+  wsHandlers[action](context, payload);
 }
 
 
