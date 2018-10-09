@@ -9,7 +9,7 @@ import { state, signal } from 'cerebral/tags';
 import { Button, Form, Input, Label } from 'semantic-ui-react'
 import router from '../../app/router';
 
-import MarksPanel from '../../components/MarksPanel';
+import PlaygroundPlayer from '../../components/PlaygroundPlayer';
 
 class MainPage extends Component {
   handleChange = path => e => {
@@ -59,7 +59,7 @@ class MainPage extends Component {
         }
         {
           auth &&
-          <MarksPanel/>
+          <PlaygroundPlayer />
         }
       </div>
     );

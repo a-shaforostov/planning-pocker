@@ -38,7 +38,7 @@ export default ({ app }) => {
         token: null,
         isConnected: false,
         auth: false,
-        sessionStarts: null,
+        sessionStarted: null,
         marks: {
           items: [0, 1, 2, 3, 5, 8, '?'],
           editor: '',
@@ -47,6 +47,7 @@ export default ({ app }) => {
         jiraLogin: '',
         jiraPass: '',
       },
+      session: {},
     },
     signals: {
       rootRouted: route('/', sequences.rootRouted), // Головна сторінка, створення гри

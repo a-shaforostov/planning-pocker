@@ -4,9 +4,13 @@ module.exports = wss => {
 
   function createSession(ws, payload) {
     const s = sessions.createSession(ws.id, payload);
+    const ps = sessions.getPublicSession(s.id);
     ws.send(JSON.stringify({
       action: 'newSession',
-      payload: s,
+      payload: {
+        ...ps,
+        token: s.observer.token,
+      },
     }));
   }
 
@@ -14,12 +18,10 @@ module.exports = wss => {
     let response;
     try {
       const s = sessions.joinSession(ws.id, payload);
+      const ps = sessions.getPublicSession(s.id);
       response = {
         success: true,
-        payload: {
-          sessionStarted: s.sessionStarted,
-          marks: s.marks,
-        }
+        payload: ps,
       }
     } catch (error) {
       response = {
@@ -38,17 +40,23 @@ module.exports = wss => {
     }
   }
 
+  function createStory(ws, payload) {
+    const s = sessions.createStory(ws.id, payload);
+    sendSessionState(ws.id);
+  }
+
   function sendSessionState(sessionId) {
     const s = sessions.getSession(sessionId);
-    const response = {
-      observer: s.observer.login,
-      players: s.players.map(p => p.login),
-    };
+    const ps = sessions.getPublicSession(sessionId);
     [s.observer, ...s.players].forEach(user => {
-      const ws = user.connection;
+      const ws = sessions.connections[user.connectionId];
+      // if (!ws) {
+      //   delete sessions.connections[user.connectionId];
+      //   return;
+      // }
       ws.send(JSON.stringify({
         action: 'sendSessionState',
-        payload: response,
+        payload: ps,
       }));
     })
   }
@@ -59,8 +67,8 @@ module.exports = wss => {
       message: 'Сесію закрито',
     };
     [s.observer, ...s.players].forEach(user => {
-      const ws = user.connection;
-      if (ws.readyState !== 1) return;
+      const ws = sessions.connections[user.connectionId];
+      if (!ws || ws.readyState !== 1) return;
 
       ws.send(JSON.stringify({
         action: 'sendSessionClosed',

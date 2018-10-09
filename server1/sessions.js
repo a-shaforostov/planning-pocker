@@ -13,28 +13,25 @@ class Sessions extends EventEmitter {
   createSession(connectionId, opt) {
     const id = uuidv1();
     const token = sha1(salt + id);
-    this.pool.push({
+    const s = {
       id,
       observer: {
         login: opt.login,
         connectionId,
-        connection: this.connections[connectionId],
         token,
         state: 'pending',
       },
       marks: opt.marks || [],
       players: [],
       stories: [],
-    });
-    return {
-      id,
-      token,
-      sessionStarted,
+      currentStory: null,
     };
+    this.pool.push(s);
+    return s;
   }
 
   startSession(sessionId, token) {
-    const s = this.sessions[sessionId];
+    const s = this.pool[sessionId];
     if (s.observer.token === token) {
       s.sessionStarted = new Date().getTime();
       s.state = 'running';
@@ -45,7 +42,7 @@ class Sessions extends EventEmitter {
   }
 
   stopSession(sessionId, token) {
-    const s = this.sessions[sessionId];
+    const s = this.pool[sessionId];
     if (s.observer.token === token) {
       s.sessionFinished = new Date().getTime();
       s.state = 'ended';
@@ -53,6 +50,50 @@ class Sessions extends EventEmitter {
     } else {
       throw new Error('Користувач не має права на керування до сесією')
     }
+  }
+  
+  createStory(sessionId, opt) {
+    const s = this.pool[sessionId];
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+    
+    s.currentStory = {
+      start: new Date.getTime(),
+      finish: null,
+      text: opt.story,
+      players: s.players.map(player => ({
+        ...player,
+        mark: false,
+        time: null,
+      }))
+    };
+    
+    s.stories.push(s.currentStory);
+  }
+  
+  markStory(sessionId, opt) {
+    const s = this.pool[sessionId];
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+    
+    const story = s.currentStory;
+    const user = story.players.find(p => p.login === opt.login);
+    if (!user) {
+      throw new Error('Гравця не знайдено');
+    }
+
+    user.mark = opt.mark;
+    user.time = new Date.getTime();
+
+    if (story.players.some(p => p.mark !== false)) {
+      // Ще не всі проголосували
+      this.emit('storyMarked', { story });
+    } else {
+      this.emit('storyResolved', { story });
+    }
+
   }
 
   joinSession(connectionId, opt) {
@@ -69,7 +110,6 @@ class Sessions extends EventEmitter {
     session.players.push({
       login: opt.login,
       connectionId,
-      connection: this.connections[connectionId],
     });
 
     return session;
@@ -79,15 +119,35 @@ class Sessions extends EventEmitter {
     const s = this.pool.find(s => s.id === id);
     if (s) {
       this.pool = this.pool.filter(s => s.id !== id);
-      s.observer.connection.close(1001, 'Сесію закрито');
+      const connection = this.connections[s.observer.connectionId];
+      if (connection) {
+        connection.close(1001, 'Сесію закрито');
+      }
       s.players.forEach(p => {
-        p.connection.close(1001, 'Сесію закрито');
+        const connection = this.connections[p.connectionId];
+        if (connection) {
+          connection.close(1001, 'Сесію закрито');
+        }
       })
     }
   }
 
   getSession(id) {
     return this.pool.find(item => item.id === id);
+  }
+  
+  getPublicSession(id) {
+    const s = this.getSession(id);
+    return {
+      id: s.id,
+      observer: s.observer.login,
+      players: s.players.map(p => p.login),
+      marks: s.marks,
+      stories: s.stories,
+      currentStory: s.currentStory,
+      sessionStarted: s.sessionStarted,
+      state: s.state,
+    }
   }
 
   addConnection(ws) {
@@ -102,7 +162,7 @@ class Sessions extends EventEmitter {
     const s = this.pool.find(s => s.observer.connectionId === id);
     if (s) {
       const id = s.id;
-      this.emit('sessionDeleted', { sessionId: id })
+      this.emit('sessionDeleted', { sessionId: id });
       this.deleteSession(id);
     }
 

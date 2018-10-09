@@ -8,7 +8,9 @@ import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { Button, Form, Input, Label } from 'semantic-ui-react'
 import router from '../../app/router';
+
 import MarksEditor from '../../components/MarksEditor';
+import PlaygroundObserver from '../../components/PlaygroundObserver';
 
 import './MainPage.css';
 
@@ -24,7 +26,7 @@ class MainPage extends Component {
   };
 
   render() {
-    const { page, login, sessionId, jiraUrl, jiraLogin, jiraPass } = this.props;
+    const { page, login, isConnected, sessionId, jiraUrl, jiraLogin, jiraPass } = this.props;
     const url = `${window.location.origin}/${sessionId}`;
     return (
       page === 'main' &&
@@ -53,7 +55,7 @@ class MainPage extends Component {
         <MarksEditor disabled={!!sessionId} />
 
         {
-          !sessionId &&
+          !sessionId && isConnected &&
           <Button onClick={this.handleStartSession} color="green" disabled={!login}>Створити сесію</Button>
         }
 
@@ -65,8 +67,9 @@ class MainPage extends Component {
             <a href={url}>{url}</a>
           </div>
         }
+        <PlaygroundObserver />
       </div>
-    );
+    )
   }
 }
 
@@ -74,6 +77,7 @@ export default connect(
   {
     page: state`data.page`,
     login: state`data.login`,
+    isConnected: state`data.isConnected`,
     jiraUrl: state`data.jiraUrl`,
     jiraLogin: state`data.jiraLogin`,
     jiraPass: state`data.jiraPass`,
