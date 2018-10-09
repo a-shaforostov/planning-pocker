@@ -30,6 +30,9 @@ export const joinSession = [
 
 export const updateField = set(state`${props`path`}`, props`value`);
 
+export const updateMark = set(state`data.marks.editor`, props`value`);
+export const addMark = actions.addMark;
+export const removeMark = actions.removeMark;
 
 export const serverMessage = [
   actions.serverMessage,

@@ -1,0 +1,18 @@
+.marks__input {
+    width: 83px;
+}
+
+.marks__mark {
+    margin: 5px 5px 5px 0;
+}
+
+.marks__mark input {
+    margin: 5px 5px 5px 0;
+    width: 52px !important;
+}
+
+.marks__mark__remove {
+    background-color: red;
+}
+
+

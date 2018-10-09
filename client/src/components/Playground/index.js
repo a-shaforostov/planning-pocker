@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 
+import MarksPanel from '../MarksPanel';
+
 class Playground extends Component {
   render() {
     const { playground } = this.props;
@@ -16,6 +18,7 @@ class Playground extends Component {
             <div key={p}>{p}</div>
           ))
         }
+        <MarksPanel />
       </div>
     )
   }

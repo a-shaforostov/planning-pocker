@@ -12,3 +12,7 @@
     flex-direction: column;
     height: 100%;
 }
+
+.pass__input input {
+    width: 162px !important;
+}

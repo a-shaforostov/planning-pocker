@@ -16,6 +16,10 @@ module.exports = wss => {
       const s = sessions.joinSession(ws.id, payload);
       response = {
         success: true,
+        payload: {
+          sessionStarted: s.sessionStarted,
+          marks: s.marks,
+        }
       }
     } catch (error) {
       response = {

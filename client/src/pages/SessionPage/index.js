@@ -9,7 +9,7 @@ import { state, signal } from 'cerebral/tags';
 import { Button, Form, Input, Label } from 'semantic-ui-react'
 import router from '../../app/router';
 
-import Playground from '../../components/Playground';
+import MarksPanel from '../../components/MarksPanel';
 
 class MainPage extends Component {
   handleChange = path => e => {
@@ -32,19 +32,35 @@ class MainPage extends Component {
           sessionId &&
           <div>Сесія: {sessionId}</div>
         }
-        <Form onSubmit={this.handleJoinSession}>
-          <Form.Group>
+        <span>&nbsp;</span>
+        {
+          !auth &&
+          <Form>
             <Form.Field>
-              <Input label="Ім'я гравця:" type="text" value={login} onChange={this.handleChange('data.login')} />
+              <Input
+                label="Ім'я гравця:"
+                icon={{name: 'asterisk', color: 'red'}}
+                type="text"
+                value={login}
+                onChange={this.handleChange('data.login')}
+              />
             </Form.Field>
-            <Button type="submit" color="green" disabled={auth || !isConnected || !login}>Приєднатися до сесії</Button>
-          </Form.Group>
-        </Form>
+
+          </Form>
+        }
+        <span>&nbsp;</span>
+        {
+          !auth &&
+          <Button color="green" disabled={!isConnected || !login} onClick={this.handleJoinSession}>Приєднатися до сесії</Button>
+        }
         {
           error &&
           <div className="error" style={{ color: 'red' }}>{error}</div>
         }
-        <Playground />
+        {
+          auth &&
+          <MarksPanel/>
+        }
       </div>
     );
   }

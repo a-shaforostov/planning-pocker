@@ -38,6 +38,14 @@ export default ({ app }) => {
         token: null,
         isConnected: false,
         auth: false,
+        sessionStarts: null,
+        marks: {
+          items: [0, 1, 2, 3, 5, 8, '?'],
+          editor: '',
+        },
+        jiraUrl: '',
+        jiraLogin: '',
+        jiraPass: '',
       },
     },
     signals: {
@@ -49,6 +57,9 @@ export default ({ app }) => {
       updateField: sequences.updateField,
       serverMessage: sequences.serverMessage,
       updateIsConnected: sequences.updateIsConnected,
+      updateMark: sequences.updateMark,
+      addMark: sequences.addMark,
+      removeMark: sequences.removeMark,
     },
     modules: {
       router,

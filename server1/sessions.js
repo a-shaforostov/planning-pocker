@@ -20,14 +20,39 @@ class Sessions extends EventEmitter {
         connectionId,
         connection: this.connections[connectionId],
         token,
+        state: 'pending',
       },
+      marks: opt.marks || [],
       players: [],
       stories: [],
     });
     return {
       id,
       token,
+      sessionStarted,
     };
+  }
+
+  startSession(sessionId, token) {
+    const s = this.sessions[sessionId];
+    if (s.observer.token === token) {
+      s.sessionStarted = new Date().getTime();
+      s.state = 'running';
+      this.emit('sessionStarted', { sessionId: s.id, time: s.sessionStarted });
+    } else {
+      throw new Error('Користувач не має права на керування до сесією')
+    }
+  }
+
+  stopSession(sessionId, token) {
+    const s = this.sessions[sessionId];
+    if (s.observer.token === token) {
+      s.sessionFinished = new Date().getTime();
+      s.state = 'ended';
+      this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
+    } else {
+      throw new Error('Користувач не має права на керування до сесією')
+    }
   }
 
   joinSession(connectionId, opt) {
@@ -46,6 +71,8 @@ class Sessions extends EventEmitter {
       connectionId,
       connection: this.connections[connectionId],
     });
+
+    return session;
   }
 
   deleteSession(id) {

@@ -1,4 +1,5 @@
 import * as wsHandlers from './wsHandlers';
+import {set} from "cerebral/factories";
 
 export const ws = {
   comp: null,
@@ -9,6 +10,7 @@ export function createSession({ props }) {
     action: 'createSession',
     payload: {
       login: props.login,
+      marks: props.marks || [0, 1, 2, 3, 5, 8, '?'],
     },
   }));
 }
@@ -21,6 +23,25 @@ export function joinSession({ state, props }) {
       login: props.login,
     },
   }));
+}
+
+export function addMark({ state, props }) {
+  const items = state.get(`data.marks.items`);
+  if (items.includes(props.value)) return;
+
+  items.push(props.value);
+  items.sort((a, b) => {
+    if (a === '?') return 1;
+    if (b === '?') return -1;
+    return a - b;
+  });
+  state.set(`data.marks.items`, items);
+}
+
+export function removeMark({ state, props }) {
+  const items = state.get(`data.marks.items`);
+  items.splice(props.index, 1);
+  state.set(`data.marks.items`, items);
 }
 
 export function serverMessage(context) {
