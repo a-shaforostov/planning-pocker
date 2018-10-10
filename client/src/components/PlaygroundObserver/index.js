@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
-import { Button, Form, TextArea, Icon } from 'semantic-ui-react';
+import { Button, Input, Form, TextArea, Icon } from 'semantic-ui-react';
+
+let timerId;
 
 const playersInGame = (story, login) => {
   return story.players.map(p => (
@@ -29,6 +31,35 @@ const playersList = (players, login) => {
 };
 
 class PlaygroundObserver extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount = () => {
+    if (!timerId) {
+      timerId = setInterval(() => {
+        const { playground, setTime } = this.props;
+        console.log(this.props);
+        if (playground && playground.currentStory) {
+          const delta = new Date(new Date().getTime() - playground.currentStory.start);
+
+          setTime({
+            time: `
+              ${String(delta.getUTCHours()).padStart(2, '0')}:
+              ${String(delta.getMinutes()).padStart(2, '0')}:
+              ${String(delta.getSeconds()).padStart(2, '0')}`
+          });
+        }
+      }, 1000);
+    }
+  };
+
+  componentWillUnmount = () => {
+    if (timerId) {
+      clearInterval(timerId);
+    }
+  };
+
   handleChange = path => e => {
     this.props.updateField({ path, value: e.target.value });
   };
@@ -39,12 +70,20 @@ class PlaygroundObserver extends Component {
   };
 
   createStoryFromJira = () => {
-    const { createStoryFromJira } = this.props;
-    createStoryFromJira({ issue: 'BIT-283' });
+    const { createStoryFromJira, playground } = this.props;
+    createStoryFromJira({ issue: playground.issueeditor });
+  };
+
+  keyUp = e => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      e.nativeEvent.stopImmediatePropagation();
+      this.createStoryFromJira();
+    }
   };
 
   render() {
-    const { playground, login } = this.props;
+    const { playground, login, time } = this.props;
     if (!playground) return null;
 
     return (
@@ -53,11 +92,26 @@ class PlaygroundObserver extends Component {
         <p><b>Ведучий:</b> {playground.observer}</p>
         { playersList(playground.players, login) }
         <Form>
+          {
+            !playground.currentStory &&
+            <Form.Input
+              icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
+              placeholder="Введіть jira issue (ABC-123) ..."
+              onKeyDown={this.keyUp}
+              value={playground.issueeditor}
+              onChange={this.handleChange(`data.playground.issueeditor`)}
+            />
+          }
+          {
+            playground.currentStory &&
+            <span>{time}&nbsp;&nbsp;&nbsp;<b>Історія, що розглядається:</b></span>
+          }
           <TextArea
-            placeholder="Історія для оцінювання"
+            placeholder="... або введіть текст story"
             value={playground.storyedit}
             disabled={!!playground.currentStory}
             onChange={this.handleChange(`data.playground.storyedit`)}
+            rows={6}
           />
           <div>&nbsp;</div>
           {
@@ -70,7 +124,6 @@ class PlaygroundObserver extends Component {
               Почати оцінювання
             </Button>
           }
-          <Button onClick={this.createStoryFromJira}>Jira</Button>
         </Form>
       </div>
     )
@@ -80,10 +133,12 @@ class PlaygroundObserver extends Component {
 export default connect(
   {
     playground: state`data.playground`,
+    time: state`time`,
     login: state`data.login`,
     updateField: signal`updateField`,
     createStory: signal`createStory`,
     createStoryFromJira: signal`createStoryFromJira`,
+    setTime: signal`setTime`,
   },
   PlaygroundObserver,
 );

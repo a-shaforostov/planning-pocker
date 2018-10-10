@@ -47,9 +47,9 @@ export default ({ app }) => {
           url: 'http://jira.gemicle.com',
           login: 'andrii.shaforostov',
           pass: 'monfri35a',
-        }
+        },
+        playground: null,
       },
-      session: {},
     },
     signals: {
       rootRouted: route('/', sequences.rootRouted), // Головна сторінка, створення гри
@@ -65,6 +65,7 @@ export default ({ app }) => {
       removeMark: sequences.removeMark,
       createStory: sequences.createStory,
       createStoryFromJira: sequences.createStoryFromJira,
+      setTime: sequences.setTime,
     },
     modules: {
       router,

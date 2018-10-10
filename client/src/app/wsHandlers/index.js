@@ -21,7 +21,6 @@ export function joinSessionResponse({ state }, data) {
 
 export function sendSessionState({ state }, payload) {
   state.set(`data.playground`, payload);
-  debugger;
   state.set(`data.playground.storyedit`, payload.currentStory.text);
 }
 
