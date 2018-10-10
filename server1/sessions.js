@@ -103,28 +103,25 @@ class Sessions extends EventEmitter {
       });
   }
 
-  markStory(sessionId, opt) {
-    const s = this.pool[sessionId];
+  giveMark(connectionId, opt) {
+    const s = this.pool.find(s => s.id === opt.sessionId);
     if (!s) {
       throw new Error('Сесію не знайдено');
     }
 
     const story = s.currentStory;
-    const user = story.players.find(p => p.login === opt.login);
+    const user = story.players.find(p => p.connectionId === connectionId);
     if (!user) {
       throw new Error('Гравця не знайдено');
     }
 
     user.mark = opt.mark;
-    user.time = new Date.getTime();
+    user.time = new Date().getTime();
 
-    if (story.players.some(p => p.mark !== false)) {
-      // Ще не всі проголосували
-      this.emit('storyMarked', { story });
-    } else {
-      this.emit('storyResolved', { story });
+    if (story.players.every(p => p.mark !== false)) {
+      // Всі проголосували
+      story.finish = new Date().getTime();
     }
-
   }
 
   joinSession(connectionId, opt) {
@@ -211,5 +208,7 @@ class Sessions extends EventEmitter {
     return Object.keys(this.connections).length;
   }
 }
+
+// Sessions.setMaxListeners(100);
 
 module.exports =  new Sessions();

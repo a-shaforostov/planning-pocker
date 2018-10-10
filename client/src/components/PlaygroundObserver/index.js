@@ -1,39 +1,54 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
+import { formatTime } from '../../app/helpers';
 import {Button, Input, Form, TextArea, Icon, Table} from 'semantic-ui-react';
 
 let timerId;
 
-const playersInGame = (story) => {
-  if (!story) return null;
+const playersInGame = (props) => {
+  const { playground } = props;
+  const { currentStory } = playground;
+  if (!currentStory) return null;
 
-  return story.players.map(p => {
-    let mark;
-    if (p.mark === true) {
-      mark = <Icon name="plus" />
-    } else if (p.mark === false) {
-      mark = <Icon name="minus" />
-    } else {
-      mark = p.mark;
-    }
+  return (
+    <Table celled striped>
+      <Table.Body>
+      {
+        currentStory.players.map(p => {
+          let mark, delta;
+          if (p.mark === true) {
+            mark = <Icon name="plus" />
+          } else if (p.mark === false) {
+            mark = <Icon name="minus" />
+          } else {
+            mark = <Button
+              disabled={p.mark === '?'}
+              color="green"
+              size="mini"
+            >
+              {p.mark}
+            </Button>
+            ;
+          }
+          delta = p.time && new Date(p.time - currentStory.start);
 
-    return (
-      <Table celled striped>
-        <Table.Body>
-          <Table.Row key={p.login}>
-            <Table.Cell>{p.login}</Table.Cell>
-            <Table.Cell>
-              { mark }
-            </Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-    );
-  })
+          return (
+            <Table.Row key={p.login}>
+              <Table.Cell>{p.login}</Table.Cell>
+              <Table.Cell textAlign='center'>{mark}</Table.Cell>
+              <Table.Cell textAlign='center'>{delta ? formatTime(delta) : '-'}</Table.Cell>
+            </Table.Row>
+          );
+        })
+      }
+      </Table.Body>
+    </Table>
+  )
 };
 
-const playersList = (players, login) => {
+const playersList = (props) => {
+  const { playground: { players }, login } = props;
   return (
     <Fragment>
       <b>Список гравців: </b>
@@ -56,16 +71,18 @@ class PlaygroundObserver extends Component {
     if (!timerId) {
       timerId = setInterval(() => {
         const { playground, setTime } = this.props;
-        console.log(this.props);
         if (playground && playground.currentStory) {
-          const delta = new Date(new Date().getTime() - playground.currentStory.start);
-
-          setTime({
-            time: `
-              ${String(delta.getUTCHours()).padStart(2, '0')}:
-              ${String(delta.getMinutes()).padStart(2, '0')}:
-              ${String(delta.getSeconds()).padStart(2, '0')}`
-          });
+          if (playground.currentStory.finish) {
+            // Історія оцінена всіма учасниками
+            const delta = new Date(playground.currentStory.finish - playground.currentStory.start);
+            setTime({ time: formatTime(delta) });
+            if (timerId) {
+              clearInterval(timerId);
+            }
+          } else {
+            const delta = new Date(new Date().getTime() - playground.currentStory.start);
+            setTime({ time: formatTime(delta) });
+          }
         }
       }, 1000);
     }
@@ -107,7 +124,7 @@ class PlaygroundObserver extends Component {
       <div>
         <div>&nbsp;</div>
         <p><b>Ведучий:</b> {playground.observer}</p>
-        { playersList(playground.players, login) }
+        { playersList(this.props) }
         <Form>
           {
             !playground.currentStory &&
@@ -143,7 +160,7 @@ class PlaygroundObserver extends Component {
           }
         </Form>
 
-        { playersInGame(playground.currentStory) }
+        { playersInGame(this.props) }
 
       </div>
     )

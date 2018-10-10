@@ -84,6 +84,17 @@ export function createStoryFromJira({ state, props }) {
   state.set(`data.playground.state`, 'sendingStory');
 }
 
+export function giveMark({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'giveMark',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      mark: props.mark,
+    },
+  }));
+  state.set(`data.player.mark`, props.mark);
+}
+
 
 //////////////////////////////////////////////////////
 export function updateName({ state, props }) {

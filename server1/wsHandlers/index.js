@@ -52,6 +52,11 @@ module.exports = wss => {
       });
   }
 
+  function giveMark(ws, payload) {
+    sessions.giveMark(ws.id, payload)
+    sendSessionState(payload.sessionId);
+  }
+
   function sendSessionState(sessionId) {
     const s = sessions.getSession(sessionId);
     const ps = sessions.getPublicSession(sessionId);
@@ -71,7 +76,7 @@ module.exports = wss => {
   function sendSessionClosed(sessionId) {
     const s = sessions.getSession(sessionId);
     const response = {
-      message: 'Сесію закрито',
+      message: 'Сесію закрито, скористайтеся іншим посиланням або знайдіть іншу забавку.',
     };
     [s.observer, ...s.players].forEach(user => {
       const ws = sessions.connections[user.connectionId];
@@ -98,5 +103,6 @@ module.exports = wss => {
     sendSessionState,
     createStory,
     createStoryFromJira,
+    giveMark,
   }
 };

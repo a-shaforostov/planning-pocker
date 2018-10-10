@@ -66,6 +66,7 @@ export default ({ app }) => {
       createStory: sequences.createStory,
       createStoryFromJira: sequences.createStoryFromJira,
       setTime: sequences.setTime,
+      giveMark: sequences.giveMark,
     },
     modules: {
       router,

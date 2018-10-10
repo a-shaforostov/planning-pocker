@@ -41,6 +41,7 @@ export const serverMessage = [
 export const createStory = actions.createStory;
 export const createStoryFromJira = actions.createStoryFromJira;
 export const setTime = set(state`time`, props`time`);
+export const giveMark = actions.giveMark;
 
 export const updateIsConnected = set(state`data.isConnected`, props`value`);
 
