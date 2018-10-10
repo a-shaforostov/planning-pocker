@@ -38,6 +38,11 @@ class PlaygroundObserver extends Component {
     createStory({ story });
   };
 
+  createStoryFromJira = () => {
+    const { createStoryFromJira } = this.props;
+    createStoryFromJira({ issue: 'BIT-283' });
+  };
+
   render() {
     const { playground, login } = this.props;
     if (!playground) return null;
@@ -65,6 +70,7 @@ class PlaygroundObserver extends Component {
               Почати оцінювання
             </Button>
           }
+          <Button onClick={this.createStoryFromJira}>Jira</Button>
         </Form>
       </div>
     )
@@ -77,6 +83,7 @@ export default connect(
     login: state`data.login`,
     updateField: signal`updateField`,
     createStory: signal`createStory`,
+    createStoryFromJira: signal`createStoryFromJira`,
   },
   PlaygroundObserver,
 );

@@ -45,6 +45,13 @@ module.exports = wss => {
     sendSessionState(payload.sessionId);
   }
 
+  function createStoryFromJira(ws, payload) {
+    return sessions.createStoryFromJira(ws.id, payload)
+      .then(() => {
+        sendSessionState(payload.sessionId);
+      });
+  }
+
   function sendSessionState(sessionId) {
     const s = sessions.getSession(sessionId);
     const ps = sessions.getPublicSession(sessionId);
@@ -90,5 +97,6 @@ module.exports = wss => {
     joinSession,
     sendSessionState,
     createStory,
+    createStoryFromJira,
   }
 };

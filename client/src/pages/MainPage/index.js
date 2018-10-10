@@ -26,7 +26,7 @@ class MainPage extends Component {
   };
 
   render() {
-    const { page, login, isConnected, sessionId, jiraUrl, jiraLogin, jiraPass } = this.props;
+    const { page, login, isConnected, sessionId, jira } = this.props;
     const url = `${window.location.origin}/${sessionId}`;
     return (
       page === 'main' &&
@@ -40,14 +40,14 @@ class MainPage extends Component {
             </Form.Field>
             <div><b>Інтеграція з Jira:</b></div>
             <Form.Field>
-              <Input label="Jira url:" type="text" value={jiraUrl} onChange={this.handleChange('data.jiraUrl')}/>
+              <Input label="Jira url:" type="text" value={jira.url} onChange={this.handleChange('data.jira.url')}/>
             </Form.Field>
             <Form.Field>
-              <Input label="Логін:" type="text" value={jiraLogin} onChange={this.handleChange('data.jiraLogin')}/>
+              <Input label="Логін:" type="text" value={jira.login} onChange={this.handleChange('data.jira.login')}/>
             </Form.Field>
             <Form.Field>
-              <Input className="pass__input" label="Пароль:" type="password" value={jiraPass}
-                     onChange={this.handleChange('data.jiraPass')}/>
+              <Input className="pass__input" label="Пароль:" type="password" value={jira.pass}
+                     onChange={this.handleChange('data.jira.pass')}/>
             </Form.Field>
           </Form>
         }
@@ -78,9 +78,7 @@ export default connect(
     page: state`data.page`,
     login: state`data.login`,
     isConnected: state`data.isConnected`,
-    jiraUrl: state`data.jiraUrl`,
-    jiraLogin: state`data.jiraLogin`,
-    jiraPass: state`data.jiraPass`,
+    jira: state`data.jira`,
     sessionId: state`data.sessionId`,
     marks: state`data.marks.items`,
     // player2Index: state`data.player2Index`,

@@ -43,9 +43,11 @@ export default ({ app }) => {
           items: [0, 1, 2, 3, 5, 8, '?'],
           editor: '',
         },
-        jiraUrl: '',
-        jiraLogin: '',
-        jiraPass: '',
+        jira: {
+          url: 'http://jira.gemicle.com',
+          login: 'andrii.shaforostov',
+          pass: 'monfri35a',
+        }
       },
       session: {},
     },
@@ -62,6 +64,7 @@ export default ({ app }) => {
       addMark: sequences.addMark,
       removeMark: sequences.removeMark,
       createStory: sequences.createStory,
+      createStoryFromJira: sequences.createStoryFromJira,
     },
     modules: {
       router,

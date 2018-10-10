@@ -5,12 +5,23 @@ export const ws = {
   comp: null,
 };
 
-export function createSession({ props }) {
+export function createSession({ state, props }) {
+  const url = state.get(`data.jira.url`);
+  const login = state.get(`data.jira.login`);
+  const pass = state.get(`data.jira.pass`);
+  let jira;
+  if (url) {
+    jira = {
+      url,
+      auth: Buffer.from(`${login}:${pass}`).toString('base64'),
+    }
+  }
   ws.comp.send(JSON.stringify({
     action: 'createSession',
     payload: {
       login: props.login,
       marks: props.marks || [0, 1, 2, 3, 5, 8, '?'],
+      jira,
     },
   }));
 }
@@ -56,6 +67,18 @@ export function createStory({ state, props }) {
       sessionId: state.get(`data.sessionId`),
       token: state.get(`data.token`),
       story: props.story,
+    },
+  }));
+  state.set(`data.playground.state`, 'sendingStory');
+}
+
+export function createStoryFromJira({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'createStoryFromJira',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+      issue: props.issue,
     },
   }));
   state.set(`data.playground.state`, 'sendingStory');

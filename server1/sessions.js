@@ -1,6 +1,7 @@
 const uuidv1 = require('uuid/v1');
 const sha1 = require('sha1');
 const EventEmitter = require('events');
+const axios = require('axios');
 const salt = '72rt81btcv723vx111b73rvc871bx36';
 
 class Sessions extends EventEmitter {
@@ -20,6 +21,7 @@ class Sessions extends EventEmitter {
         connectionId,
         token,
         state: 'pending',
+        jira: opt.jira,
       },
       marks: opt.marks || [],
       players: [],
@@ -70,6 +72,35 @@ class Sessions extends EventEmitter {
     };
 
     s.stories.push(s.currentStory);
+  }
+
+  createStoryFromJira(connectionId, opt) {
+    const s = this.pool.find(s => s.id === opt.sessionId);
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+
+    const url = `${s.observer.jira.url}/rest/api/latest/issue/${opt.issue}`;
+    const auth = s.observer.jira.auth;
+    return axios.get(url, {
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    })
+      .then(data => {
+        s.currentStory = {
+          start: new Date().getTime(),
+          finish: null,
+          text: data.data.fields.description,
+          players: s.players.map(player => ({
+            ...player,
+            mark: false,
+            time: null,
+          }))
+        };
+
+        s.stories.push(s.currentStory);
+      });
   }
 
   markStory(sessionId, opt) {
