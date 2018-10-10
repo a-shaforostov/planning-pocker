@@ -61,6 +61,7 @@ export default ({ app }) => {
       updateMark: sequences.updateMark,
       addMark: sequences.addMark,
       removeMark: sequences.removeMark,
+      createStory: sequences.createStory,
     },
     modules: {
       router,

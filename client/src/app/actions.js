@@ -49,6 +49,18 @@ export function serverMessage(context) {
   wsHandlers[action](context, payload);
 }
 
+export function createStory({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'createStory',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+      story: props.story,
+    },
+  }));
+  state.set(`data.playground.state`, 'sendingStory');
+}
+
 
 //////////////////////////////////////////////////////
 export function updateName({ state, props }) {

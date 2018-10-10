@@ -38,6 +38,8 @@ export const serverMessage = [
   actions.serverMessage,
 ];
 
+export const createStory = actions.createStory;
+
 export const updateIsConnected = set(state`data.isConnected`, props`value`);
 
 

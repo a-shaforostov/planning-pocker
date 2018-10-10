@@ -42,7 +42,7 @@ module.exports = wss => {
 
   function createStory(ws, payload) {
     const s = sessions.createStory(ws.id, payload);
-    sendSessionState(ws.id);
+    sendSessionState(payload.sessionId);
   }
 
   function sendSessionState(sessionId) {
@@ -89,5 +89,6 @@ module.exports = wss => {
     createSession,
     joinSession,
     sendSessionState,
+    createStory,
   }
 };

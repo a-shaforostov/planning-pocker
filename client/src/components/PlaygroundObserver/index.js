@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
+import { Button, Form, TextArea, Icon } from 'semantic-ui-react';
 
 const playersInGame = (story, login) => {
   return story.players.map(p => (
@@ -28,15 +29,43 @@ const playersList = (players, login) => {
 };
 
 class PlaygroundObserver extends Component {
+  handleChange = path => e => {
+    this.props.updateField({ path, value: e.target.value });
+  };
+
+  createStory = () => {
+    const { createStory, playground: { storyedit: story } } = this.props;
+    createStory({ story });
+  };
+
   render() {
-    const { session, login } = this.props;
-    if (!session) return null;
+    const { playground, login } = this.props;
+    if (!playground) return null;
 
     return (
       <div>
         <div>&nbsp;</div>
-        <p><b>Ведучий:</b> {session.observer}</p>
-        { playersList(session.players, login) }
+        <p><b>Ведучий:</b> {playground.observer}</p>
+        { playersList(playground.players, login) }
+        <Form>
+          <TextArea
+            placeholder="Історія для оцінювання"
+            value={playground.storyedit}
+            disabled={!!playground.currentStory}
+            onChange={this.handleChange(`data.playground.storyedit`)}
+          />
+          <div>&nbsp;</div>
+          {
+            !playground.currentStory &&
+            <Button color="green" onClick={this.createStory}>
+              {
+                playground.state === 'sendingStory' &&
+                <Icon loading name='asterisk' />
+              }
+              Почати оцінювання
+            </Button>
+          }
+        </Form>
       </div>
     )
   }
@@ -44,8 +73,10 @@ class PlaygroundObserver extends Component {
 
 export default connect(
   {
-    session: state`data.playground`,
+    playground: state`data.playground`,
     login: state`data.login`,
+    updateField: signal`updateField`,
+    createStory: signal`createStory`,
   },
   PlaygroundObserver,
 );

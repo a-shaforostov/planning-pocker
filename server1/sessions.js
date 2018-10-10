@@ -51,15 +51,15 @@ class Sessions extends EventEmitter {
       throw new Error('Користувач не має права на керування до сесією')
     }
   }
-  
-  createStory(sessionId, opt) {
-    const s = this.pool[sessionId];
+
+  createStory(connectionId, opt) {
+    const s = this.pool.find(s => s.id === opt.sessionId);
     if (!s) {
       throw new Error('Сесію не знайдено');
     }
-    
+
     s.currentStory = {
-      start: new Date.getTime(),
+      start: new Date().getTime(),
       finish: null,
       text: opt.story,
       players: s.players.map(player => ({
@@ -68,16 +68,16 @@ class Sessions extends EventEmitter {
         time: null,
       }))
     };
-    
+
     s.stories.push(s.currentStory);
   }
-  
+
   markStory(sessionId, opt) {
     const s = this.pool[sessionId];
     if (!s) {
       throw new Error('Сесію не знайдено');
     }
-    
+
     const story = s.currentStory;
     const user = story.players.find(p => p.login === opt.login);
     if (!user) {
@@ -135,7 +135,7 @@ class Sessions extends EventEmitter {
   getSession(id) {
     return this.pool.find(item => item.id === id);
   }
-  
+
   getPublicSession(id) {
     const s = this.getSession(id);
     return {
