@@ -21,7 +21,9 @@ export function joinSessionResponse({ state }, data) {
 
 export function sendSessionState({ state }, payload) {
   state.set(`data.playground`, payload);
-  state.set(`data.playground.storyedit`, payload.currentStory.text);
+  if (payload.currentStory) {
+    state.set(`data.playground.storyedit`, payload.currentStory.text);
+  }
 }
 
 export function sendSessionClosed({ state }, payload) {

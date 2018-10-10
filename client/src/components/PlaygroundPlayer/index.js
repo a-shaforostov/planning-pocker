@@ -1,24 +1,36 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
+import {Form, Icon, Table, TextArea} from 'semantic-ui-react';
 
 import MarksPanel from '../MarksPanel';
 
 const playersInGame = (story, login, finished) => {
-  return story.players.map(p => (
-    <table>
-      <tr key={p.login}>
-        <td><div style={{color: login === p.login ? 'blue' : 'black'}}>{p.login}</div></td>
-        <td><div>
-          {
-            finished
-              ? p.mark
-              : !!p.mark
-          }
-        </div></td>
-      </tr>
-    </table>
-  ))
+  if (!story) return null;
+
+  return story.players.map(p => {
+    let mark;
+    if (p.mark === true) {
+      mark = <Icon name="plus" />
+    } else if (p.mark === false) {
+      mark = <Icon name="minus" />
+    } else {
+      mark = finished ? p.mark : !!p.mark;
+    }
+
+    return (
+      <Table celled striped>
+        <Table.Body>
+          <Table.Row key={p.login}>
+            <Table.Cell><div style={{color: login === p.login ? 'blue' : 'black'}}>{p.login}</div></Table.Cell>
+            <Table.Cell>
+              { mark }
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    )
+  })
 };
 
 const playersList = (players, login) => {
@@ -39,14 +51,28 @@ const players = (story, players, login, finished) => story ? playersInGame(story
 
 class PlaygroundPlayer extends Component {
   render() {
-    const { session, login } = this.props;
-    if (!session) return null;
+    const { playground, login } = this.props;
+    if (!playground) return null;
 
     return (
       <div>
-        <p><b>Ведучий:</b> {session.observer}</p>
-        { players(session.currentStory, session.players, login, session.status === 'finished') }
+        <p><b>Ведучий:</b> {playground.observer}</p>
+        { playersList(playground.players, login) }
+
+        {
+          playground.currentStory &&
+          <Form>
+            <TextArea
+              value={playground.currentStory.text}
+              disabled={true}
+              rows={6}
+            />
+          </Form>
+        }
+        <div>&nbsp;</div>
+
         <MarksPanel />
+        { playersInGame(playground.currentStory, login, playground.status === 'finished') }
       </div>
     )
   }
@@ -54,7 +80,7 @@ class PlaygroundPlayer extends Component {
 
 export default connect(
   {
-    session: state`data.playground`,
+    playground: state`data.playground`,
     login: state`data.login`,
   },
   PlaygroundPlayer,

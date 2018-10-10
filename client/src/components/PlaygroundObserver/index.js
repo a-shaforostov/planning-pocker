@@ -1,19 +1,36 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
-import { Button, Input, Form, TextArea, Icon } from 'semantic-ui-react';
+import {Button, Input, Form, TextArea, Icon, Table} from 'semantic-ui-react';
 
 let timerId;
 
-const playersInGame = (story, login) => {
-  return story.players.map(p => (
-    <table>
-      <tr key={p.login}>
-        <td><div style={{color: login === p.login ? 'blue' : 'black'}}>{p.login}</div></td>
-        <td><div>{p.mark}</div></td>
-      </tr>
-    </table>
-  ))
+const playersInGame = (story) => {
+  if (!story) return null;
+
+  return story.players.map(p => {
+    let mark;
+    if (p.mark === true) {
+      mark = <Icon name="plus" />
+    } else if (p.mark === false) {
+      mark = <Icon name="minus" />
+    } else {
+      mark = p.mark;
+    }
+
+    return (
+      <Table celled striped>
+        <Table.Body>
+          <Table.Row key={p.login}>
+            <Table.Cell>{p.login}</Table.Cell>
+            <Table.Cell>
+              { mark }
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    );
+  })
 };
 
 const playersList = (players, login) => {
@@ -125,6 +142,9 @@ class PlaygroundObserver extends Component {
             </Button>
           }
         </Form>
+
+        { playersInGame(playground.currentStory) }
+
       </div>
     )
   }
