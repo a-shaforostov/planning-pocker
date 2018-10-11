@@ -2,12 +2,12 @@ import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { formatTime } from '../../app/helpers';
-import {Button, Input, Form, TextArea, Icon, Table} from 'semantic-ui-react';
+import {Button, Label, Form, TextArea, Icon, Table} from 'semantic-ui-react';
 
 let timerId;
 
 const playersInGame = (props) => {
-  const { playground } = props;
+  const { playground, finishStory } = props;
   const { currentStory } = playground;
   if (!currentStory) return null;
 
@@ -21,15 +21,19 @@ const playersInGame = (props) => {
             mark = <Icon name="plus" />
           } else if (p.mark === false) {
             mark = <Icon name="minus" />
+          } else if (currentStory.finish) {
+            mark = (
+              <Button
+                color="green"
+                size="mini"
+                disabled={!!currentStory.result}
+                onClick={() => finishStory({ result: p.mark })}
+              >
+                {p.mark}
+              </Button>
+            )
           } else {
-            mark = <Button
-              disabled={p.mark === '?'}
-              color="green"
-              size="mini"
-            >
-              {p.mark}
-            </Button>
-            ;
+            mark = p.mark
           }
           delta = p.time && new Date(p.time - currentStory.start);
 
@@ -51,13 +55,16 @@ const playersList = (props) => {
   const { playground: { players }, login } = props;
   return (
     <Fragment>
-      <b>Список гравців: </b>
-      {
-        players.map(p => (
-          <span key={p}><span style={login === p ? {color: 'blue', fontWeight: 700} : {}}>{p}</span>,&nbsp;</span>
-        ))
-      }
-      <p>Коли всі зберуться, публікуйте першу історію.</p>
+      <span>
+        <strong>Список гравців: </strong>
+        {
+          players.map(p => (
+            <span key={p} style={login === p ? {color: 'blue', fontWeight: 700} : {}}>{p}, </span>
+          ))
+        }
+      </span>
+      <p></p>
+      <div><b>Історія для оцінювання гравцями:</b></div>
     </Fragment>
   )
 };
@@ -70,14 +77,14 @@ class PlaygroundObserver extends Component {
   componentDidMount = () => {
     if (!timerId) {
       timerId = setInterval(() => {
-        const { playground, setTime } = this.props;
+        const { playground, setTime, time } = this.props;
         if (playground && playground.currentStory) {
           if (playground.currentStory.finish) {
             // Історія оцінена всіма учасниками
             const delta = new Date(playground.currentStory.finish - playground.currentStory.start);
-            setTime({ time: formatTime(delta) });
-            if (timerId) {
-              clearInterval(timerId);
+            const formated = formatTime(delta);
+            if (formated !== time) {
+              setTime({time: formatTime(delta)});
             }
           } else {
             const delta = new Date(new Date().getTime() - playground.currentStory.start);
@@ -99,13 +106,13 @@ class PlaygroundObserver extends Component {
   };
 
   createStory = () => {
-    const { createStory, playground: { storyedit: story } } = this.props;
+    const { createStory, storyedit: story } = this.props;
     createStory({ story });
   };
 
   createStoryFromJira = () => {
-    const { createStoryFromJira, playground } = this.props;
-    createStoryFromJira({ issue: playground.issueeditor });
+    const { createStoryFromJira, issueedit } = this.props;
+    createStoryFromJira({ issue: issueedit });
   };
 
   keyUp = e => {
@@ -116,12 +123,22 @@ class PlaygroundObserver extends Component {
     }
   };
 
+  finishStory = result => () => {
+    this.props.finishStory({ result });
+  };
+
+  newStory = () => {
+    this.props.newStory();
+  };
+
   render() {
-    const { playground, login, time } = this.props;
+    const { playground, time, issueedit, storyedit } = this.props;
     if (!playground) return null;
 
+    let finalMark;
+
     return (
-      <div>
+      <Fragment>
         <div>&nbsp;</div>
         <p><b>Ведучий:</b> {playground.observer}</p>
         { playersList(this.props) }
@@ -132,19 +149,19 @@ class PlaygroundObserver extends Component {
               icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
               placeholder="Введіть jira issue (ABC-123) ..."
               onKeyDown={this.keyUp}
-              value={playground.issueeditor}
-              onChange={this.handleChange(`data.playground.issueeditor`)}
+              value={issueedit}
+              onChange={this.handleChange(`data.issueedit`)}
             />
           }
           {
             playground.currentStory &&
-            <span>{time}&nbsp;&nbsp;&nbsp;<b>Історія, що розглядається:</b></span>
+            <span>{time}</span>
           }
           <TextArea
             placeholder="... або введіть текст story"
-            value={playground.storyedit}
+            value={storyedit}
             disabled={!!playground.currentStory}
-            onChange={this.handleChange(`data.playground.storyedit`)}
+            onChange={this.handleChange(`data.storyedit`)}
             rows={6}
           />
           <div>&nbsp;</div>
@@ -162,7 +179,48 @@ class PlaygroundObserver extends Component {
 
         { playersInGame(this.props) }
 
-      </div>
+        {/* Остаточне оцінювання */}
+        {
+          playground.currentStory && !playground.currentStory.result &&
+          <Fragment>
+            {
+              playground.currentStory &&
+              <div><b>Остаточне оцінювання:</b></div>
+            }
+            {
+              finalMark &&
+              <div>
+                <Button onClick={this.finishStory(finalMark)}>Завершити з оцінкою {finalMark}</Button>
+                <div>або оберіть оцінку із запропонованих гравцями</div>
+              </div>
+            }
+            {
+              playground.currentStory && playground.currentStory.finish &&
+              <Fragment>
+                оберіть оцінку із запропонованих гравцями або
+                <Button onClick={this.finishStory('?')}>Завершити з невизначеним результатом</Button>
+              </Fragment>
+            }
+            {
+              playground.currentStory && !playground.currentStory.finish &&
+              <Button onClick={this.finishStory('?')}>Завершити достроково з невизначеним результатом</Button>
+            }
+          </Fragment>
+        }
+
+        {/* Остаточний результат */}
+        {
+          playground.currentStory && playground.currentStory.result &&
+          <Fragment>
+            <div>Історія оцінена. Результат: <Label>{playground.currentStory.result}</Label></div>
+            <div>&nbsp;</div>
+            <div>
+              <Button color="blue" onClick={this.newStory}>Наступна історія</Button>
+              <Button color="red" onClick={this.finishSession}>Закрити сесію</Button>
+            </div>
+          </Fragment>
+        }
+      </Fragment>
     )
   }
 }
@@ -170,12 +228,16 @@ class PlaygroundObserver extends Component {
 export default connect(
   {
     playground: state`data.playground`,
+    issueedit: state`data.issueedit`,
+    storyedit: state`data.storyedit`,
     time: state`time`,
     login: state`data.login`,
     updateField: signal`updateField`,
     createStory: signal`createStory`,
     createStoryFromJira: signal`createStoryFromJira`,
     setTime: signal`setTime`,
+    finishStory: signal`finishStory`,
+    newStory: signal`newStory`,
   },
   PlaygroundObserver,
 );

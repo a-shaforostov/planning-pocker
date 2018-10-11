@@ -58,6 +58,7 @@ export function removeMark({ state, props }) {
 export function serverMessage(context) {
   const { action, payload } = context.props;
   wsHandlers[action](context, payload);
+  context.state.set(`data.playground.state`, '-stable-');
 }
 
 export function createStory({ state, props }) {
@@ -93,6 +94,31 @@ export function giveMark({ state, props }) {
     },
   }));
   state.set(`data.player.mark`, props.mark);
+}
+
+export function finishStory({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'finishStory',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+      result: props.result,
+    },
+  }));
+  state.set(`data.playground.currentStory.result`, props.result);
+}
+
+export function newStory({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'newStory',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+    },
+  }));
+  state.set(`data.playground.currentStory`, null);
+  state.set(`data.storyedit`, '');
+  state.set(`data.player.mark`, '');
 }
 
 

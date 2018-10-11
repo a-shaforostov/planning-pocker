@@ -41,7 +41,17 @@ module.exports = wss => {
   }
 
   function createStory(ws, payload) {
-    const s = sessions.createStory(ws.id, payload);
+    try {
+      const s = sessions.createStory(ws.id, payload);
+    } catch (err) {
+      return ws.send(JSON.stringify({
+        action: 'errorMessage',
+        payload: {
+          message: 'Не вдалося опублікувати історію',
+          reason: err.message,
+        },
+      }));
+    }
     sendSessionState(payload.sessionId);
   }
 
@@ -49,11 +59,50 @@ module.exports = wss => {
     return sessions.createStoryFromJira(ws.id, payload)
       .then(() => {
         sendSessionState(payload.sessionId);
+      })
+      .catch((err) => {
+        ws.send(JSON.stringify({
+          action: 'errorMessage',
+          payload: {
+            message: 'Не вдалося отримати історію з Jira',
+            reason: err.message,
+          },
+        }));
       });
   }
 
   function giveMark(ws, payload) {
     sessions.giveMark(ws.id, payload)
+    sendSessionState(payload.sessionId);
+  }
+
+  function finishStory(ws, payload) {
+    try {
+      sessions.finishStory(ws.id, payload)
+    } catch (err) {
+      return ws.send(JSON.stringify({
+        action: 'errorMessage',
+        payload: {
+          message: 'Не вдалося оцінити історію',
+          reason: err.message,
+        },
+      }));
+    }
+    sendSessionState(payload.sessionId);
+  }
+
+  function newStory(ws, payload) {
+    try {
+      const s = sessions.newStory(ws.id, payload);
+    } catch (err) {
+      return ws.send(JSON.stringify({
+        action: 'errorMessage',
+        payload: {
+          message: 'Не вдалося перейти до нової історії',
+          reason: err.message,
+        },
+      }));
+    }
     sendSessionState(payload.sessionId);
   }
 
@@ -104,5 +153,7 @@ module.exports = wss => {
     createStory,
     createStoryFromJira,
     giveMark,
+    finishStory,
+    newStory,
   }
 };

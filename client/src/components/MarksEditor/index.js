@@ -38,15 +38,19 @@ class MarksEditor extends Component {
 
     return (
       <div>
-        <div><b>Оцінки:</b></div>
+        &nbsp;
+        <div><b>Доступні оцінки:</b></div>
         {
           marks.map((mark, index) => (
             <Input
               className="marks__mark"
               key={index}
               value={mark}
-              labelPosition="right"
+              title={mark}
+              labelPosition={!disabled && 'right'}
               label={
+                !disabled
+                  ?
                 <Button
                   disabled={mark === '?' || disabled}
                   color="red"
@@ -54,18 +58,21 @@ class MarksEditor extends Component {
                   onClick={this.removeMark(index).bind(this)}>
                   x
                 </Button>
+                  :null
               }
             />
           ))
         }
-        <Input
-          value={editor}
-          className="marks__input"
-          disabled={disabled}
-          icon={{ name: 'plus', color: 'green', circular: true, link: true, onClick: this.addMark}}
-          onChange={this.updateMark}
-          onKeyUp={this.keyUp}
-        />
+        {
+          !disabled &&
+          <Input
+            value={editor}
+            className="marks__input"
+            icon={{ name: 'plus', color: 'green', circular: true, link: true, onClick: this.addMark}}
+            onChange={this.updateMark}
+            onKeyUp={this.keyUp}
+          />
+        }
       </div>
     )
   }

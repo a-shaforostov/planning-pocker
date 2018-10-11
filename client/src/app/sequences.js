@@ -7,7 +7,7 @@ import { set } from 'cerebral/factories'
 export const rootRouted = [
   set(state`data.page`, 'main'),
   set(state`data.isObserver`, false),
-  set(state`data.login`, null),
+  set(state`data.login`, ''),
   set(state`data.sessionId`, null),
   set(state`data.token`, null),
 ];
@@ -15,7 +15,7 @@ export const rootRouted = [
 export const playerRouted = [
   set(state`data.page`, 'session'),
   set(state`data.isObserver`, false),
-  set(state`data.login`, null),
+  set(state`data.login`, ''),
   set(state`data.sessionId`, props`params.id`),
   set(state`data.token`, null),
 ];
@@ -42,6 +42,8 @@ export const createStory = actions.createStory;
 export const createStoryFromJira = actions.createStoryFromJira;
 export const setTime = set(state`time`, props`time`);
 export const giveMark = actions.giveMark;
+export const finishStory = actions.finishStory;
+export const newStory = actions.newStory;
 
 export const updateIsConnected = set(state`data.isConnected`, props`value`);
 

@@ -45,10 +45,9 @@ class MainPage extends Component {
                 onChange={this.handleChange('data.login')}
               />
             </Form.Field>
-
+            <span>&nbsp;</span>
           </Form>
         }
-        <span>&nbsp;</span>
         {
           !auth &&
           <Button color="green" disabled={!isConnected || !login} onClick={this.handleJoinSession}>Приєднатися до сесії</Button>

@@ -22,10 +22,18 @@ export function joinSessionResponse({ state }, data) {
 export function sendSessionState({ state }, payload) {
   state.set(`data.playground`, payload);
   if (payload.currentStory) {
-    state.set(`data.playground.storyedit`, payload.currentStory.text);
+    state.set(`data.storyedit`, payload.currentStory.text);
+  } else {
+    state.set(`data.player.mark`, '');
   }
 }
 
 export function sendSessionClosed({ state }, payload) {
   state.set(`data.error`, payload.message);
 }
+
+export function errorMessage({ state }, payload) {
+  alert(`${payload.message}\n${payload.reason}`);
+}
+
+

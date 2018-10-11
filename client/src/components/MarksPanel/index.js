@@ -11,8 +11,9 @@ class MarksPanel extends Component {
   };
 
   render() {
-    const { marks, myMark } = this.props;
-
+    const { marks, myMark, finish } = this.props;
+    if (finish) return null;
+debugger;
     return (
       <div>
         <div><b>Оцініть історію:</b></div>
@@ -38,6 +39,7 @@ export default connect(
   {
     marks: state`data.marks.items`,
     myMark: state`data.player.mark`,
+    finish: state`data.playground.currentStory.finish`,
     giveMark: signal`giveMark`,
   },
   MarksPanel,

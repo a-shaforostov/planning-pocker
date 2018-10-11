@@ -52,7 +52,6 @@ const playersList = (props) => {
           <span key={p}><span style={login === p ? {color: 'blue', fontWeight: 700} : {}}>{p}</span>,&nbsp;</span>
         ))
       }
-      <p>Чекаємо інших учасників та першу історію...</p>
     </Fragment>
   )
 };
@@ -65,15 +64,15 @@ class PlaygroundPlayer extends Component {
   componentDidMount = () => {
     if (!timerId) {
       timerId = setInterval(() => {
-        const { playground, setTime } = this.props;
+        const { playground, setTime, time } = this.props;
         console.log(this.props);
         if (playground && playground.currentStory) {
           if (playground.currentStory.finish) {
             // Історія оцінена всіма учасниками
             const delta = new Date(playground.currentStory.finish - playground.currentStory.start);
-            setTime({ time: formatTime(delta) });
-            if (timerId) {
-              clearInterval(timerId);
+            const formated = formatTime(delta);
+            if (formated !== time) {
+              setTime({time: formatTime(delta)});
             }
           } else {
             const delta = new Date(new Date().getTime() - playground.currentStory.start);
@@ -100,19 +99,31 @@ class PlaygroundPlayer extends Component {
         { playersList(this.props) }
 
         {
-          playground.currentStory &&
-          <Form>
-            <span>{time}&nbsp;&nbsp;&nbsp;<b>Історія, що розглядається:</b></span>
-            <TextArea
-              value={playground.currentStory.text}
-              disabled={true}
-              rows={6}
-            />
-          </Form>
+          !playground.currentStory &&
+          <div>
+            <div>&nbsp;</div>
+            <Icon loading name='asterisk' />
+            Чекаємо історію на оцінювання...
+          </div>
         }
-        <div>&nbsp;</div>
+        {
+          playground.currentStory &&
+          <Fragment>
+            <Form>
+              <div>&nbsp;</div>
+              <div><b>Історія, що розглядається:</b></div>
+              <span>{time}</span>
+              <TextArea
+                value={playground.currentStory.text}
+                disabled={true}
+                rows={6}
+              />
+            </Form>
+            <div>&nbsp;</div>
 
-        <MarksPanel />
+            <MarksPanel />
+          </Fragment>
+        }
         { playersInGame(this.props) }
       </div>
     )

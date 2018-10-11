@@ -39,6 +39,8 @@ export default ({ app }) => {
         isConnected: false,
         auth: false,
         sessionStarted: null,
+        issueedit: '',
+        storyedit: '',
         marks: {
           items: [0, 1, 2, 3, 5, 8, '?'],
           editor: '',
@@ -67,6 +69,8 @@ export default ({ app }) => {
       createStoryFromJira: sequences.createStoryFromJira,
       setTime: sequences.setTime,
       giveMark: sequences.giveMark,
+      finishStory: sequences.finishStory,
+      newStory: sequences.newStory,
     },
     modules: {
       router,
