@@ -121,6 +121,14 @@ export function newStory({ state, props }) {
   state.set(`data.player.mark`, '');
 }
 
+export function switchStory({ state, props }) {
+  const currentStory = state.get(`data.playground.stories`)[props.num - 1];
+  state.set(`data.playground.currentStory`, currentStory);
+  state.set(`data.storyedit`, currentStory.text);
+  state.set(`data.issueedit`, '');
+  state.set(`data.player.mark`, '');
+}
+
 
 //////////////////////////////////////////////////////
 export function updateName({ state, props }) {

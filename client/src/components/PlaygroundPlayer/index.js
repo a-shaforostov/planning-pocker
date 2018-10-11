@@ -14,31 +14,34 @@ const playersInGame = (props, finished) => {
   if (!currentStory) return null;
 
   return (
-    <Table celled striped>
-      <Table.Body>
-      {
-        currentStory.players.map(p => {
-          let mark, delta;
-          if (p.mark === true) {
-            mark = <Icon name="plus" />
-          } else if (p.mark === false) {
-            mark = <Icon name="minus" />
-          } else {
-            mark = currentStory.finish ? p.mark : <Icon name="plus" />;
-          }
-          delta = p.time && new Date(p.time - currentStory.start);
+    <Fragment>
+      <div style={{ marginBottom: '-10px' }}><b>Оцінки гравців:</b></div>
+      <Table celled striped>
+        <Table.Body>
+        {
+          currentStory.players.map(p => {
+            let mark, delta;
+            if (p.mark === true) {
+              mark = <Icon name="plus" />
+            } else if (p.mark === false) {
+              mark = <Icon name="minus" />
+            } else {
+              mark = currentStory.finish ? p.mark : <Icon name="plus" />;
+            }
+            delta = p.time && new Date(p.time - currentStory.start);
 
-          return (
-            <Table.Row key={p.login}>
-              <Table.Cell><div style={{color: login === p.login ? 'blue' : 'black'}}>{p.login}</div></Table.Cell>
-              <Table.Cell textAlign='center'>{mark}</Table.Cell>
-              <Table.Cell textAlign='center'>{delta ? formatTime(delta) : '-'}</Table.Cell>
-            </Table.Row>
-          )
-        })
-      }
-      </Table.Body>
-    </Table>
+            return (
+              <Table.Row key={p.login}>
+                <Table.Cell><div style={{color: login === p.login ? 'blue' : 'black'}}>{p.login}</div></Table.Cell>
+                <Table.Cell textAlign='center'>{mark}</Table.Cell>
+                <Table.Cell textAlign='center'>{delta ? formatTime(delta) : '-'}</Table.Cell>
+              </Table.Row>
+            )
+          })
+        }
+        </Table.Body>
+      </Table>
+    </Fragment>
   )
 };
 
@@ -111,8 +114,7 @@ class PlaygroundPlayer extends Component {
           <Fragment>
             <Form>
               <div>&nbsp;</div>
-              <div><b>Історія, що розглядається:</b></div>
-              <span>{time}</span>
+              <div>{time} <b>Історія #{playground.currentStory.num}:</b></div>
               <TextArea
                 value={playground.currentStory.text}
                 disabled={true}
@@ -125,6 +127,14 @@ class PlaygroundPlayer extends Component {
           </Fragment>
         }
         { playersInGame(this.props) }
+        {
+          playground.currentStory && playground.currentStory.finish &&
+          <div>
+            <div>&nbsp;</div>
+            <Icon loading name='asterisk' />
+            Чекаємо рішення ведучого...
+          </div>
+        }
       </div>
     )
   }

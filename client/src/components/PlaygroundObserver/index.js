@@ -12,42 +12,45 @@ const playersInGame = (props) => {
   if (!currentStory) return null;
 
   return (
-    <Table celled striped>
-      <Table.Body>
-      {
-        currentStory.players.map(p => {
-          let mark, delta;
-          if (p.mark === true) {
-            mark = <Icon name="plus" />
-          } else if (p.mark === false) {
-            mark = <Icon name="minus" />
-          } else if (currentStory.finish) {
-            mark = (
-              <Button
-                color="green"
-                size="mini"
-                disabled={!!currentStory.result}
-                onClick={() => finishStory({ result: p.mark })}
-              >
-                {p.mark}
-              </Button>
-            )
-          } else {
-            mark = p.mark
-          }
-          delta = p.time && new Date(p.time - currentStory.start);
+    <Fragment>
+      <div style={{ marginBottom: '-10px' }}><b>Оцінки гравців:</b></div>
+      <Table celled striped>
+        <Table.Body>
+        {
+          currentStory.players.map(p => {
+            let mark, delta;
+            if (p.mark === true) {
+              mark = <Icon name="plus" />
+            } else if (p.mark === false) {
+              mark = <Icon name="minus" />
+            } else if (currentStory.finish) {
+              mark = (
+                <Button
+                  color="green"
+                  size="mini"
+                  disabled={!!currentStory.result}
+                  onClick={() => finishStory({ result: p.mark })}
+                >
+                  {p.mark}
+                </Button>
+              )
+            } else {
+              mark = p.mark
+            }
+            delta = p.time && new Date(p.time - currentStory.start);
 
-          return (
-            <Table.Row key={p.login}>
-              <Table.Cell>{p.login}</Table.Cell>
-              <Table.Cell textAlign='center'>{mark}</Table.Cell>
-              <Table.Cell textAlign='center'>{delta ? formatTime(delta) : '-'}</Table.Cell>
-            </Table.Row>
-          );
-        })
-      }
-      </Table.Body>
-    </Table>
+            return (
+              <Table.Row key={p.login}>
+                <Table.Cell>{p.login}</Table.Cell>
+                <Table.Cell textAlign='center'>{mark}</Table.Cell>
+                <Table.Cell textAlign='center'>{delta ? formatTime(delta) : '-'}</Table.Cell>
+              </Table.Row>
+            );
+          })
+        }
+        </Table.Body>
+      </Table>
+    </Fragment>
   )
 };
 
@@ -63,8 +66,6 @@ const playersList = (props) => {
           ))
         }
       </span>
-      <p></p>
-      <div><b>Історія для оцінювання гравцями:</b></div>
     </Fragment>
   )
 };
@@ -145,17 +146,24 @@ class PlaygroundObserver extends Component {
         <Form>
           {
             !playground.currentStory &&
-            <Form.Input
-              icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
-              placeholder="Введіть jira issue (ABC-123) ..."
-              onKeyDown={this.keyUp}
-              value={issueedit}
-              onChange={this.handleChange(`data.issueedit`)}
-            />
+            <Fragment>
+              <p></p>
+              <div><b>Історія для оцінювання гравцями:</b></div>
+              <Form.Input
+                icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
+                placeholder="Введіть jira issue (ABC-123) ..."
+                onKeyDown={this.keyUp}
+                value={issueedit}
+                onChange={this.handleChange(`data.issueedit`)}
+              />
+            </Fragment>
           }
           {
             playground.currentStory &&
-            <span>{time}</span>
+            <Fragment>
+              <div>&nbsp;</div>
+              <span>{time} <b>Історія #{playground.currentStory.num}:</b></span>
+            </Fragment>
           }
           <TextArea
             placeholder="... або введіть текст story"

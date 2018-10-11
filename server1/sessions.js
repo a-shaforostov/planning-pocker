@@ -78,6 +78,7 @@ class Sessions extends EventEmitter {
     }
 
     s.currentStory = {
+      num: s.stories.length + 1,
       start: new Date().getTime(),
       finish: null,
       text: opt.story,
@@ -108,6 +109,7 @@ class Sessions extends EventEmitter {
         if (!data.data) return null;
 
         s.currentStory = {
+          num: s.stories.length + 1,
           start: new Date().getTime(),
           finish: null,
           text: data.data.fields.description,

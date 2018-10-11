@@ -11,6 +11,7 @@ import router from '../../app/router';
 
 import MarksEditor from '../../components/MarksEditor';
 import PlaygroundObserver from '../../components/PlaygroundObserver';
+import History from '../../components/History';
 
 import './MainPage.css';
 
@@ -68,6 +69,7 @@ class MainPage extends Component {
           </div>
         }
         <PlaygroundObserver />
+        <History />
       </div>
     )
   }

@@ -71,6 +71,7 @@ export default ({ app }) => {
       giveMark: sequences.giveMark,
       finishStory: sequences.finishStory,
       newStory: sequences.newStory,
+      switchStory: sequences.switchStory,
     },
     modules: {
       router,

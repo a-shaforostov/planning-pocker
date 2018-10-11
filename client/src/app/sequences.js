@@ -44,6 +44,7 @@ export const setTime = set(state`time`, props`time`);
 export const giveMark = actions.giveMark;
 export const finishStory = actions.finishStory;
 export const newStory = actions.newStory;
+export const switchStory = actions.switchStory;
 
 export const updateIsConnected = set(state`data.isConnected`, props`value`);
 
