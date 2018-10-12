@@ -4,8 +4,6 @@
   "private": true,
   "dependencies": {
     "@cerebral/react": "^4.0.0",
-    "@cerebral/router": "^3.2.2",
-    "babel-plugin-cerebral": "^1.0.0",
     "cerebral": "^5.0.0",
     "page": "^1.10.2",
     "react": "^16.5.2",

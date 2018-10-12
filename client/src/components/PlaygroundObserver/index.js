@@ -151,7 +151,7 @@ class PlaygroundObserver extends Component {
               <div><b>Історія для оцінювання гравцями:</b></div>
               <Form.Input
                 icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
-                placeholder="Введіть jira issue (ABC-123) ..."
+                placeholder="Введіть jira issue key or ID ..."
                 onKeyDown={this.keyUp}
                 value={issueedit}
                 onChange={this.handleChange(`data.issueedit`)}

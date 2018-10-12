@@ -72,13 +72,14 @@ module.exports = wss => {
   }
 
   function giveMark(ws, payload) {
-    sessions.giveMark(ws.id, payload)
+    sessions.giveMark(ws.id, payload);
     sendSessionState(payload.sessionId);
   }
 
   function finishStory(ws, payload) {
+    let story;
     try {
-      sessions.finishStory(ws.id, payload)
+      story = sessions.finishStory(ws.id, payload)
     } catch (err) {
       return ws.send(JSON.stringify({
         action: 'errorMessage',
@@ -89,6 +90,18 @@ module.exports = wss => {
       }));
     }
     sendSessionState(payload.sessionId);
+
+    // Відіслати результат в Jira
+    return sessions.updateIssue(payload.sessionId, story)
+      .catch(err => {
+        return ws.send(JSON.stringify({
+          action: 'errorMessage',
+          payload: {
+            message: 'Не вдалося оновити issue в Jira',
+            reason: err.message,
+          },
+        }));
+      });
   }
 
   function newStory(ws, payload) {

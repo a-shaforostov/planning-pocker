@@ -113,6 +113,48 @@ class Sessions extends EventEmitter {
           start: new Date().getTime(),
           finish: null,
           text: data.data.fields.description,
+          issue: opt.issue,
+          players: s.players.map(player => ({
+            ...player,
+            mark: false,
+            time: null,
+          }))
+        };
+
+        s.stories.push(s.currentStory);
+        return s.currentStory;
+      })
+  }
+
+  updateIssue(sessionId, story) {
+    const s = this.pool.find(s => s.id === sessionId);
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+
+    const url = `${s.observer.jira.url}/rest/api/latest/issue/${story.issue}`;
+    const auth = s.observer.jira.auth;
+    return axios.put(url, {
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+      body: JSON.stringify({
+        'fields': {
+          'timetracking': {
+            'originalEstimate': '10h',
+          }
+        }
+      })
+    })
+      .then(data => {
+        if (!data.data) return null;
+
+        s.currentStory = {
+          num: s.stories.length + 1,
+          start: new Date().getTime(),
+          finish: null,
+          text: data.data.fields.description,
+          jira: story.issue,
           players: s.players.map(player => ({
             ...player,
             mark: false,
@@ -159,6 +201,7 @@ class Sessions extends EventEmitter {
     const story = s.currentStory;
     story.result = opt.result;
     story.finish = story.finish || new Date().getTime();
+    return story;
   }
 
   joinSession(connectionId, opt) {

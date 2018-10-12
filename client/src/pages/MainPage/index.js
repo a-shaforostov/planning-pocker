@@ -7,7 +7,6 @@ import React, { Component } from "react";
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { Button, Form, Input, Label } from 'semantic-ui-react'
-import router from '../../app/router';
 
 import MarksEditor from '../../components/MarksEditor';
 import PlaygroundObserver from '../../components/PlaygroundObserver';

@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  server:
+    build: ./server1
+    expose:
+      - ${APP_SERVER_PORT}
+      - ${APP_WS_PORT}
+    environment:
+      API_HOST: ${API_HOST}
+      APP_SERVER_PORT: ${APP_SERVER_PORT}
+      APP_WS_PORT: ${APP_WS_PORT}
+    ports:
+      - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+      - ${APP_WS_PORT}:${APP_WS_PORT}
+    command: node app1.js
+
+  client:
+    build: ./client
+    environment:
+      - REACT_PORT:${REACT_PORT}
+    expose:
+      - ${REACT_PORT}
+    ports:
+      - 3005:${REACT_PORT}
+    links:
+      - server
+    command: npx http-server build

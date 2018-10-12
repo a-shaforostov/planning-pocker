@@ -1,8 +1,6 @@
 import page from 'page';
 import * as sequences from "./sequences";
 
-import router from './router';
-
 export default ({ app }) => {
   app.on('initialized', () => page.start());
 
@@ -72,9 +70,6 @@ export default ({ app }) => {
       finishStory: sequences.finishStory,
       newStory: sequences.newStory,
       switchStory: sequences.switchStory,
-    },
-    modules: {
-      router,
     },
   }
 };
