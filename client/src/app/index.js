@@ -69,6 +69,7 @@ export default ({ app }) => {
       giveMark: sequences.giveMark,
       finishStory: sequences.finishStory,
       newStory: sequences.newStory,
+      revoteStory: sequences.revoteStory,
       switchStory: sequences.switchStory,
     },
   }

@@ -11,10 +11,12 @@ class MarksPanel extends Component {
   };
 
   render() {
-    const { marks, myMark, currentStory, login } = this.props;
+    const { marks, currentStory, login } = this.props;
+    const me = currentStory.players.find(p => p.login === login);
+    const myMark = me && me.mark;
     if (currentStory.finish) return null;
 
-    if (!currentStory.players.find(p => p.login === login)) {
+    if (!me) {
       return (
         <div>
           <div>&nbsp;</div>
@@ -48,7 +50,6 @@ class MarksPanel extends Component {
 export default connect(
   {
     marks: state`data.marks.items`,
-    myMark: state`data.player.mark`,
     login: state`data.login`,
     currentStory: state`data.playground.currentStory`,
     giveMark: signal`giveMark`,

@@ -26,8 +26,6 @@ export function sendSessionState({ state }, payload) {
   state.set(`data.playground`, payload);
   if (payload.currentStory) {
     state.set(`data.storyedit`, payload.currentStory.text);
-  } else {
-    state.set(`data.player.mark`, '');
   }
 }
 

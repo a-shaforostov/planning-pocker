@@ -60,6 +60,21 @@ module.exports = wss => {
     sendSessionState(payload.sessionId);
   }
 
+  function revoteStory(ws, payload) {
+    try {
+      const s = sessions.revoteStory(ws.id, payload);
+    } catch (err) {
+      return ws.send(JSON.stringify({
+        action: 'errorMessage',
+        payload: {
+          message: 'Не вдалося опублікувати історію. ',
+          reason: err.message,
+        },
+      }));
+    }
+    sendSessionState(payload.sessionId);
+  }
+
   function createStoryFromJira(ws, payload) {
     return sessions.createStoryFromJira(ws.id, payload)
       .then(() => {
@@ -175,6 +190,7 @@ module.exports = wss => {
     giveMark,
     finishStory,
     newStory,
+    revoteStory,
     stopSession,
   }
 };

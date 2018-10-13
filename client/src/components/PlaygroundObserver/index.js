@@ -119,12 +119,16 @@ class PlaygroundObserver extends Component {
     this.props.newStory();
   };
 
+  revoteStory = () => {
+    this.props.revoteStory();
+  };
+
   stopSession = () => {
     this.props.stopSession();
   };
 
   render() {
-    const { playground, time, issueedit, storyedit } = this.props;
+    const { playground, time, issueedit, storyedit, jira } = this.props;
     if (!playground) return null;
 
     let finalMark;
@@ -141,9 +145,10 @@ class PlaygroundObserver extends Component {
               <div><b>Історія для оцінювання гравцями:</b></div>
               <Form.Input
                 icon={{ name: 'send', color: 'blue', circular: true, link: true, onClick: this.createStoryFromJira }}
-                placeholder="Введіть jira issue key or ID ..."
                 onKeyDown={this.keyUp}
                 value={issueedit}
+                disabled={!jira.url || playground.sessionFinished}
+                placeholder={!jira.url ? 'Не вказані реквізити доступу до Jira' : 'Введіть Jira issue key or ID ...'}
                 onChange={this.handleChange(`data.issueedit`)}
               />
             </Fragment>
@@ -156,9 +161,9 @@ class PlaygroundObserver extends Component {
             </Fragment>
           }
           <TextArea
-            placeholder="... або введіть текст story"
+            placeholder={!jira.url ? 'Введіть текст історії' : '... або введіть текст історії'}
             value={storyedit}
-            disabled={!!playground.currentStory}
+            disabled={!!playground.currentStory || playground.sessionFinished}
             onChange={this.handleChange(`data.storyedit`)}
             rows={6}
           />
@@ -224,6 +229,7 @@ class PlaygroundObserver extends Component {
           <Fragment>
             <div>
               <Button color="blue" onClick={this.newStory}>Наступна історія</Button>
+              <Button color="orange" onClick={this.revoteStory}>Переголосувати</Button>
               <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
             </div>
           </Fragment>
@@ -245,6 +251,7 @@ export default connect(
     playground: state`data.playground`,
     issueedit: state`data.issueedit`,
     storyedit: state`data.storyedit`,
+    jira: state`data.jira`,
     time: state`time`,
     login: state`data.login`,
     updateField: signal`updateField`,
@@ -253,6 +260,7 @@ export default connect(
     setTime: signal`setTime`,
     finishStory: signal`finishStory`,
     newStory: signal`newStory`,
+    revoteStory: signal`revoteStory`,
     stopSession: signal`stopSession`,
   },
   PlaygroundObserver,

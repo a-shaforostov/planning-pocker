@@ -11,11 +11,13 @@ export function createSession({ state, props }) {
   const login = state.get(`data.jira.login`);
   const pass = state.get(`data.jira.pass`);
   let jira;
-  if (url) {
+  if (url && login && pass) {
     jira = {
       url,
       auth: Buffer.from(`${login}:${pass}`).toString('base64'),
     }
+  } else {
+    state.set(`data.jira`, {});
   }
   ws.comp.send(JSON.stringify({
     action: 'createSession',
@@ -45,6 +47,8 @@ export function stopSession({ state, props }) {
       token: state.get(`data.token`),
     },
   }));
+  state.set(`data.storyedit`, '');
+  state.set(`data.issueedit`, '');
 }
 
 export function addMark({ state, props }) {
@@ -88,6 +92,18 @@ export function createStory({ state, props }) {
   state.set(`data.playground.state`, 'sendingStory');
 }
 
+export function revoteStory({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'revoteStory',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+      storyNum: state.get(`data.playground.currentStory.num`),
+    },
+  }));
+  state.set(`data.playground.state`, 'sendingStory');
+}
+
 export function createStoryFromJira({ state, props }) {
   if (!props.story) {
     setError({ state, props: { error: 'Історія не заповнена' } });
@@ -112,7 +128,7 @@ export function giveMark({ state, props }) {
       mark: props.mark,
     },
   }));
-  state.set(`data.player.mark`, props.mark);
+  state.set(`data.playground.currentStory.mark`, props.mark);
 }
 
 export function finishStory({ state, props }) {
@@ -137,7 +153,6 @@ export function newStory({ state, props }) {
   }));
   state.set(`data.playground.currentStory`, null);
   state.set(`data.storyedit`, '');
-  state.set(`data.player.mark`, '');
 }
 
 export function switchStory({ state, props }) {
@@ -145,7 +160,6 @@ export function switchStory({ state, props }) {
   state.set(`data.playground.currentStory`, currentStory);
   state.set(`data.storyedit`, currentStory.text);
   state.set(`data.issueedit`, '');
-  state.set(`data.player.mark`, '');
 }
 
 

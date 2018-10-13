@@ -41,3 +41,4 @@ export const setTime = factories.messageHandlerFactory([set(state`time`, props`t
 export const giveMark = factories.messageHandlerFactory([actions.giveMark]);
 export const finishStory = factories.messageHandlerFactory([actions.finishStory]);
 export const newStory = factories.messageHandlerFactory([actions.newStory]);
+export const revoteStory = factories.messageHandlerFactory([actions.revoteStory]);

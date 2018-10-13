@@ -62,6 +62,10 @@ class Sessions extends EventEmitter {
       throw new Error('Сесію не знайдено');
     }
 
+    if (s.observer.token !== opt.token) {
+      throw new Error('Користувач не має прав керувати сесією');
+    }
+
     if (!s.players.length) {
       throw new Error('Не спішіть. Гравці ще не зібралися')
     }
@@ -79,6 +83,29 @@ class Sessions extends EventEmitter {
     };
 
     s.stories.push(s.currentStory);
+  }
+
+  revoteStory(connectionId, opt) {
+    const s = this.pool.find(s => s.id === opt.sessionId);
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+
+    if (s.observer.token !== opt.token) {
+      throw new Error('Користувач не має прав керувати сесією');
+    }
+
+    const story = s.stories.find(story => story.num === opt.storyNum);
+    story.start = new Date().getTime();
+    story.finish = null;
+    story.result = null;
+    story.players = s.players.map(player => ({
+      ...player,
+      mark: false,
+      time: null,
+    }));
+
+    s.currentStory = story;
   }
 
   createStoryFromJira(connectionId, opt) {
