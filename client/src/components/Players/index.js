@@ -17,7 +17,6 @@ const playersList = (props) => {
             <div
               className="player__rail"
               key={p}
-              style={login === p ? {color: 'blue', fontWeight: 700} : {}}
             >
               {p}
             </div>

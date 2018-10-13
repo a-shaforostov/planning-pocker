@@ -34,13 +34,15 @@ function mostDifferent(players) {
 
   const playersMarks = {};
   Object.entries(players).forEach(([login, player]) => {
+    if (player.mark === '?') return;
+
     // Знайти мінімальну та максимальну оцінку гравця
     const ext = player.reduce((ext, player) => ({
       min: !ext.min || player.mark < ext.min ? player.mark : ext.min,
       max: !ext.max || player.mark > ext.max ? player.mark : ext.max,
     }), {});
 
-    // Знайти різницю ектремумів
+    // Знайти різницю екстремумів
     playersMarks[login] = ext.max - ext.min;
   });
 

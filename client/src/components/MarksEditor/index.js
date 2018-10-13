@@ -37,29 +37,32 @@ class MarksEditor extends Component {
 
     return (
       <div className="marks__editor__wrapper">
-        {/*&nbsp;*/}
         <div><b>Доступні оцінки:</b></div>
         {
           marks.map((mark, index) => (
-            <Input
-              className="marks__mark"
-              key={index}
-              value={mark}
-              title={mark}
-              labelPosition={!disabled && 'right'}
-              label={
-                !disabled
-                  ?
-                <Button
-                  disabled={mark === '?' || disabled}
-                  color="red"
-                  className="marks__mark__remove"
-                  onClick={this.removeMark(index).bind(this)}>
-                  x
-                </Button>
-                  :null
-              }
-            />
+            disabled
+              ? <Input
+                  className="marks__mark"
+                  key={index}
+                  value={mark}
+                  title={mark}
+                />
+              : <Input
+                  className="marks__mark"
+                  key={index}
+                  value={mark}
+                  title={mark}
+                  labelPosition="right"
+                  label={
+                      <Button
+                        disabled={mark === '?' || disabled}
+                        color="red"
+                        className="marks__mark__remove"
+                        onClick={this.removeMark(index).bind(this)}>
+                        x
+                      </Button>
+                  }
+                />
           ))
         }
         {

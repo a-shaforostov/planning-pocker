@@ -43,9 +43,9 @@ export default ({ app }) => {
           editor: '',
         },
         jira: {
-          url: 'http://jira.gemicle.com',
-          login: 'andrii.shaforostov',
-          pass: 'monfri35a',
+          url: 'http://andpr99.atlassian.net',
+          login: 'andpr99@gmail.com',
+          pass: 'zyjdcrfz',
         },
         playground: null,
         statsVisible: false,

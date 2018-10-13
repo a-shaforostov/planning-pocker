@@ -51,7 +51,7 @@ describe('getAvgTimes', () => {
     const players = {
       login1: [{ time: 70000, mark: 5 }, { time: 10000, mark: 1 }, { time: 12000, mark: 5 }],
       login2: [{ time: 75000, mark: 3 }, { time: 45000, mark: 3 }],
-      login3: [{ time: 80000, mark: 2 }, { time: 80000, mark: 3 }, { time: 40000, mark: 8 }],
+      login3: [{ time: 80000, mark: '?' }, { time: 80000, mark: 3 }, { time: 40000, mark: 8 }],
     };
 
     expect(getAvgTimes(players)).toMatchObject({
@@ -71,7 +71,7 @@ describe('mostDifferent', () => {
     const players = {
       login1: [{ time: 70000, mark: 5 }, { time: 10000, mark: 1 }, { time: 12000, mark: 5 }],
       login2: [{ time: 75000, mark: 3 }, { time: 45000, mark: 3 }],
-      login3: [{ time: 80000, mark: 2 }, { time: 80000, mark: 3 }, { time: 40000, mark: 8 }],
+      login3: [{ time: 80000, mark: 2 }, { time: 80000, mark: '?' }, { time: 40000, mark: 8 }],
       login4: [{ time: 80000, mark: 2 }, { time: 80000, mark: 3 }, { time: 40000, mark: 8 }],
     };
 
@@ -113,7 +113,7 @@ describe('varStories', () => {
             { login: 'login3', time: new Date(2018, 10, 13, 10, 30, 40, 0).getTime(), mark: 8 },
             { login: 'login4', time: new Date(2018, 10, 13, 10, 30, 40, 0).getTime(), mark: 8 },
             { login: 'login5', time: new Date(2018, 10, 13, 10, 30, 40, 0).getTime(), mark: 1 },
-            { login: 'login6', time: new Date(2018, 10, 13, 10, 30, 40, 0).getTime(), mark: 0 },
+            { login: 'login6', time: new Date(2018, 10, 13, 10, 30, 40, 0).getTime(), mark: '?' },
           ],
         },
       ]

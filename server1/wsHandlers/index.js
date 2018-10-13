@@ -84,7 +84,7 @@ module.exports = wss => {
         ws.send(JSON.stringify({
           action: 'errorMessage',
           payload: {
-            message: 'Не вдалося отримати історію з Jira. ',
+            message: 'Не вдалося створити історію з Jira. ',
             reason: err.message,
           },
         }));
@@ -92,8 +92,18 @@ module.exports = wss => {
   }
 
   function giveMark(ws, payload) {
-    sessions.giveMark(ws.id, payload);
-    sendSessionState(payload.sessionId);
+    return sessions.giveMark(ws.id, payload)
+      .catch(err => {
+        const s = sessions.getSession(payload.sessionId);
+        sessions.connections[s.observer.connectionId].send(JSON.stringify({
+          action: 'errorMessage',
+          payload: {
+            message: 'Не вдалося оновити оцінку в Jira. ',
+            reason: err.message,
+          },
+        }));
+      })
+      .then(() => sendSessionState(payload.sessionId));
   }
 
   function finishStory(ws, payload) {

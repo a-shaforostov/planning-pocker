@@ -34,37 +34,34 @@ class Sessions extends EventEmitter {
     return s;
   }
 
-  stopSession(connectionId, opt) {
-    const s = this.getSession(opt.sessionId);
-
-    if (s.observer.token === opt.token) {
-      s.sessionFinished = new Date().getTime();
-      this.calcStats(s);
-      this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
-    } else {
+  checkToken(session, token) {
+    if (session.observer.token !== token) {
       throw new Error('Користувач не має прав керувати сесією')
     }
   }
 
+  stopSession(connectionId, opt) {
+    const s = this.getSession(opt.sessionId);
+    this.checkToken(s, opt.token);
+
+    s.sessionFinished = new Date().getTime();
+    this.calcStats(s);
+    this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
+  }
+
   newStory(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
-
-    if (s.observer.token !== opt.token) {
-      throw new Error('Користувач не має прав керувати сесією');
-    }
+    this.checkToken(s, opt.token);
 
     s.currentStory = null;
   }
 
   createStory(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
-
-    if (s.observer.token !== opt.token) {
-      throw new Error('Користувач не має прав керувати сесією');
-    }
+    this.checkToken(s, opt.token);
 
     if (!s.players.length) {
-      throw new Error('Не спішіть. Гравці ще не зібралися')
+      throw new Error('Не поспішайте. Гравці ще не зібралися')
     }
 
     s.currentStory = {
@@ -84,10 +81,7 @@ class Sessions extends EventEmitter {
 
   revoteStory(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
-
-    if (s.observer.token !== opt.token) {
-      throw new Error('Користувач не має прав керувати сесією');
-    }
+    this.checkToken(s, opt.token);
 
     const story = s.stories.find(story => story.num === opt.storyNum);
     story.start = new Date().getTime();
@@ -104,14 +98,22 @@ class Sessions extends EventEmitter {
 
   createStoryFromJira(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
+    this.checkToken(s, opt.token);
 
-    const url = `${s.observer.jira.url}/rest/api/latest/issue/${opt.issue}`;
-    const auth = s.observer.jira.auth;
-    return axios.get(url, {
-      headers: {
-        Authorization: `Basic ${auth}`,
-      },
-    })
+    return Promise.resolve()
+      .then(() => {
+        if (!s.players.length) {
+          throw new Error('Не поспішайте. Гравці ще не зібралися')
+        }
+
+        const url = `${s.observer.jira.url}/rest/api/latest/issue/${opt.issue}`;
+        const auth = s.observer.jira.auth;
+        return axios.get(url, {
+          headers: {
+            Authorization: `Basic ${auth}`,
+          },
+        })
+      })
       .then(data => {
         if (!data.data) return null;
 
@@ -134,6 +136,7 @@ class Sessions extends EventEmitter {
   }
 
   updateIssue(sessionId, story) {
+    if (story.result === '?') return Promise.resolve();
     const s = this.getSession(sessionId);
 
     const url = `${s.observer.jira.url}/rest/api/latest/issue/${story.issue}`;
@@ -141,66 +144,49 @@ class Sessions extends EventEmitter {
     return axios.put(url, {
       headers: {
         Authorization: `Basic ${auth}`,
+        'X-Atlassian-Token': 'no-check',
       },
       body: JSON.stringify({
         'fields': {
           'timetracking': {
-            'originalEstimate': '10h',
+            'originalEstimate': `${story.result}h`,
           }
         }
       })
-    })
-      .then(data => {
-        if (!data.data) return null;
-
-        s.currentStory = {
-          num: s.stories.length + 1,
-          start: new Date().getTime(),
-          finish: null,
-          text: data.data.fields.description,
-          jira: story.issue,
-          players: s.players.map(player => ({
-            ...player,
-            mark: false,
-            time: null,
-          }))
-        };
-
-        s.stories.push(s.currentStory);
-        return s.currentStory;
-      })
+    });
   }
 
   giveMark(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
 
-    const story = s.currentStory;
-    const user = story.players.find(p => p.connectionId === connectionId);
-    if (!user) {
-      throw new Error('Гравця не знайдено');
-    }
+    return Promise.resolve()
+      .then(() => {
+        const story = s.currentStory;
+        const user = story.players.find(p => p.connectionId === connectionId);
+        if (!user) {
+          throw new Error('Гравця не знайдено');
+        }
 
-    user.mark = opt.mark;
-    user.time = new Date().getTime();
+        user.mark = opt.mark;
+        user.time = new Date().getTime();
 
-    if (story.players.every(p => p.mark !== false)) {
-      // Всі проголосували
-      story.finish = new Date().getTime();
+        if (story.players.every(p => p.mark !== false)) {
+          // Всі проголосували
+          story.finish = new Date().getTime();
 
-      // Якщо всі оцінки однакові - прийняти іх за результат
-      const marks = story.players.reduce((marks, player) => ({ ...marks, [player.mark]: true }), {});
-      if (Object.keys(marks).length === 1) {
-        story.result = Object.keys(marks)[0]
-      }
-    }
+          // Якщо всі оцінки однакові - прийняти іх за результат
+          const marks = story.players.reduce((marks, player) => ({ ...marks, [player.mark]: true }), {});
+          if (Object.keys(marks).length === 1) {
+            story.result = Object.keys(marks)[0];
+            return this.updateIssue(opt.sessionId, story);
+          }
+        }
+      });
   }
 
   finishStory(connectionId, opt) {
     const s = this.getSession(opt.sessionId);
-
-    if (s.observer.token !== opt.token) {
-      throw new Error('Користувача не має прав керувати сесією');
-    }
+    this.checkToken(s, opt.token);
 
     const story = s.currentStory;
     story.result = opt.result;
@@ -306,7 +292,5 @@ class Sessions extends EventEmitter {
     return Object.keys(this.connections).length;
   }
 }
-
-// Sessions.setMaxListeners(100);
 
 module.exports =  new Sessions();
