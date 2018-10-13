@@ -3,10 +3,10 @@
  * @file
  */
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
-import { Grid, Button, Form, Input, Label, Message, Segment } from 'semantic-ui-react'
+import { Grid, Button, Form, Input, Icon, Message, Segment } from 'semantic-ui-react'
 
 import MarksEditor from '../../components/MarksEditor';
 import PlaygroundObserver from '../../components/PlaygroundObserver';
@@ -23,6 +23,13 @@ class MainPage extends Component {
     e.preventDefault();
     const { login, marks } = this.props;
     this.props.createSession({ login, marks });
+  };
+
+  handleLoadData = (e) => {
+    e.preventDefault();
+    e.target.files[0] &&
+    this.props.loadFile({ filename: e.target.files[0] });
+    e.target.value = null;
   };
 
   render() {
@@ -65,7 +72,24 @@ class MainPage extends Component {
 
             {
               !sessionId && isConnected &&
-              <Button fluid onClick={this.handleStartSession} color="green" disabled={!login}>Створити сесію</Button>
+              <Fragment>
+                <Button fluid onClick={this.handleStartSession} color="blue" disabled={!login}>Створити сесію</Button>
+                <div style={{textAlign: 'center', margin: '5px 0'}}>або</div>
+                <input
+                  accept="application/json"
+                  className="input__file"
+                  id="button-data-load"
+                  type="file"
+                  onChange={this.handleLoadData}
+                  hidden
+                />
+                <label htmlFor="button-data-load">
+                  <Button icon fluid color="green" as="span">
+                    <Icon name="folder open" />&nbsp;&nbsp;
+                    Завантажити сесію
+                  </Button>
+                </label>
+              </Fragment>
             }
 
             {
@@ -93,11 +117,9 @@ export default connect(
     jira: state`data.jira`,
     sessionId: state`data.sessionId`,
     marks: state`data.marks.items`,
-    // player2Index: state`data.player2Index`,
     createSession: signal`createSession`,
     updateField: signal`updateField`,
-    // updateName: sequences`updateName`,
-    // newGame: sequences`newGame`,
+    loadFile: signal`loadFile`,
   },
   MainPage,
 );

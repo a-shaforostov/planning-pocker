@@ -161,3 +161,46 @@ export function switchStory({ state, props }) {
   state.set(`data.storyedit`, currentStory.text);
   state.set(`data.issueedit`, '');
 }
+
+export function downloadFile({ props }) {
+  const { data, filename } = props;
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = data;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => document.body.removeChild(link), 0);
+}
+
+export async function loadFile({ state, props }) {
+
+  function readFile(file){
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        resolve(fr.result)
+      };
+      fr.readAsText(file);
+    });
+  }
+
+  const { filename } = props;
+
+  let data;
+  try {
+    data = await readFile(filename);
+  } catch(e) {
+    alert('Can`t read file');
+    return;
+  }
+
+  let dataObj;
+  try {
+    dataObj = JSON.parse(data);
+  } catch(e) {
+    alert('wrong file format');
+    return;
+  }
+
+  state.set('data', dataObj);
+}

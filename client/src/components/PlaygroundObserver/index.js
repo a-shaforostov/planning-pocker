@@ -133,6 +133,15 @@ class PlaygroundObserver extends Component {
     this.props.showStats({ visible: true });
   };
 
+  downloadFile = (e) => {
+    e.preventDefault();
+    const { data, sessionId } = this.props;
+    if (data) {
+      const uri = "data:application/json,"+encodeURIComponent(JSON.stringify(data));
+      this.props.downloadFile({ data: uri, filename: `${sessionId}.json` });
+    }
+  };
+
   render() {
     const { playground, time, issueedit, storyedit, jira } = this.props;
     if (!playground) return null;
@@ -245,7 +254,8 @@ class PlaygroundObserver extends Component {
           <div>
             <div>&nbsp;</div>
             Сесія закрита. Для створення нової сесії оновіть сторінку.
-            <Button fluid color="blue" onClick={this.showStats}>Переглянути статистику...</Button>
+            <Button color="blue" onClick={this.showStats}>Переглянути статистику...</Button>
+            <Button icon color="green" onClick={this.downloadFile}><Icon name="save" />Зберегти сесію</Button>
           </div>
         }
       </Fragment>
@@ -255,10 +265,12 @@ class PlaygroundObserver extends Component {
 
 export default connect(
   {
+    data: state`data`,
     playground: state`data.playground`,
     issueedit: state`data.issueedit`,
     storyedit: state`data.storyedit`,
     jira: state`data.jira`,
+    sessionId: state`data.sessionId`,
     time: state`time`,
     login: state`data.login`,
     updateField: signal`updateField`,
@@ -270,6 +282,7 @@ export default connect(
     revoteStory: signal`revoteStory`,
     stopSession: signal`stopSession`,
     showStats: signal`showStats`,
+    downloadFile: signal`downloadFile`,
   },
   PlaygroundObserver,
 );

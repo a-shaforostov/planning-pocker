@@ -72,6 +72,8 @@ export default ({ app }) => {
       newStory: sequences.newStory,
       revoteStory: sequences.revoteStory,
       switchStory: sequences.switchStory,
+      downloadFile: sequences.downloadFile,
+      loadFile: sequences.loadFile,
       showStats: sequences.showStats,
     },
   }

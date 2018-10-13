@@ -27,6 +27,8 @@ export const updateMark = set(state`data.marks.editor`, props`value`);
 export const addMark = actions.addMark;
 export const removeMark = actions.removeMark;
 export const switchStory = actions.switchStory;
+export const downloadFile = actions.downloadFile;
+export const loadFile = actions.loadFile;
 export const showStats = set(state`data.statsVisible`, props`visible`);
 
 /* Отримання повідомлень з сервера */
