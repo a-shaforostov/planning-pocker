@@ -40,7 +40,13 @@ class WebSocketProvider extends Component {
 
   render() {
     const { isConnected } = this.props;
-    return <Icon name="wifi" color={isConnected ? 'green' : 'grey'} title={isConnected ? 'Online' : 'Offline'} />;
+    return (
+      <Icon
+        name="wifi"
+        color={isConnected ? 'green' : 'grey'}
+        title={isConnected ? 'Online' : `Відсутнє з'єднання з сервером\nСпробуйте оновити сторінку`}
+      />
+    );
   }
 }
 

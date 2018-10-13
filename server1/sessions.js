@@ -27,27 +27,16 @@ class Sessions extends EventEmitter {
       players: [],
       stories: [],
       currentStory: null,
+      sessionStarted: new Date().getTime(),
     };
     this.pool.push(s);
     return s;
   }
 
-  startSession(sessionId, token) {
-    const s = this.pool[sessionId];
-    if (s.observer.token === token) {
-      s.sessionStarted = new Date().getTime();
-      s.state = 'running';
-      this.emit('sessionStarted', { sessionId: s.id, time: s.sessionStarted });
-    } else {
-      throw new Error('Користувач не має права на керування до сесією')
-    }
-  }
-
-  stopSession(sessionId, token) {
-    const s = this.pool[sessionId];
-    if (s.observer.token === token) {
+  stopSession(connectionId, opt) {
+    const s = this.pool.find(s => s.id === opt.sessionId);
+    if (s.observer.token === opt.token) {
       s.sessionFinished = new Date().getTime();
-      s.state = 'ended';
       this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
     } else {
       throw new Error('Користувач не має права на керування до сесією')
@@ -254,6 +243,7 @@ class Sessions extends EventEmitter {
       stories: s.stories,
       currentStory: s.currentStory,
       sessionStarted: s.sessionStarted,
+      sessionFinished: s.sessionFinished,
       state: s.state,
     }
   }

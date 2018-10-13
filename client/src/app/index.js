@@ -36,7 +36,6 @@ export default ({ app }) => {
         token: null,
         isConnected: false,
         auth: false,
-        sessionStarted: null,
         issueedit: '',
         storyedit: '',
         marks: {
@@ -57,6 +56,7 @@ export default ({ app }) => {
 
       createSession: sequences.createSession,
       joinSession: sequences.joinSession,
+      stopSession: sequences.stopSession,
       updateField: sequences.updateField,
       serverMessage: sequences.serverMessage,
       updateIsConnected: sequences.updateIsConnected,

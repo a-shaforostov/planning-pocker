@@ -37,6 +37,16 @@ export function joinSession({ state, props }) {
   }));
 }
 
+export function stopSession({ state, props }) {
+  ws.comp.send(JSON.stringify({
+    action: 'stopSession',
+    payload: {
+      sessionId: state.get(`data.sessionId`),
+      token: state.get(`data.token`),
+    },
+  }));
+}
+
 export function addMark({ state, props }) {
   const items = state.get(`data.marks.items`);
   if (items.includes(props.value)) return;

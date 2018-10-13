@@ -102,37 +102,49 @@ class PlaygroundPlayer extends Component {
         { playersList(this.props) }
 
         {
-          !playground.currentStory &&
-          <div>
-            <div>&nbsp;</div>
-            <Icon loading name='asterisk' />
-            Чекаємо історію на оцінювання...
-          </div>
-        }
-        {
-          playground.currentStory &&
+          !playground.sessionFinished &&
           <Fragment>
-            <Form>
-              <div>&nbsp;</div>
-              <div>{time} <b>Історія #{playground.currentStory.num}:</b></div>
-              <TextArea
-                value={playground.currentStory.text}
-                disabled={true}
-                rows={6}
-              />
-            </Form>
-            <div>&nbsp;</div>
+            {
+              !playground.currentStory &&
+              <div>
+                <div>&nbsp;</div>
+                <Icon loading name='asterisk' />
+                Чекаємо історію на оцінювання...
+              </div>
+            }
+            {
+              playground.currentStory &&
+              <Fragment>
+                <Form>
+                  <div>&nbsp;</div>
+                  <div>{time} <b>Історія #{playground.currentStory.num}:</b></div>
+                  <TextArea
+                    value={playground.currentStory.text}
+                    disabled={true}
+                    rows={6}
+                  />
+                </Form>
+                <div>&nbsp;</div>
 
-            <MarksPanel />
+                <MarksPanel />
+              </Fragment>
+            }
+            { playersInGame(this.props) }
+            {
+              playground.currentStory && playground.currentStory.finish &&
+              <div>
+                <div>&nbsp;</div>
+                <Icon loading name='asterisk' />
+                Чекаємо рішення ведучого...
+              </div>
+            }
           </Fragment>
         }
-        { playersInGame(this.props) }
         {
-          playground.currentStory && playground.currentStory.finish &&
+          playground.sessionFinished &&
           <div>
             <div>&nbsp;</div>
-            <Icon loading name='asterisk' />
-            Чекаємо рішення ведучого...
+            Сесія закрита. Приєднуйтесь до іншої або створюйте нову.
           </div>
         }
       </div>

@@ -17,3 +17,8 @@
 .pass__input input {
     width: 162px !important;
 }
+
+.observer__login .label {
+    width: 120px!important;
+    text-align: right;
+}

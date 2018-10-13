@@ -41,7 +41,7 @@ class MainPage extends Component {
             }
             {
               !sessionId &&
-              <Form>
+              <Form className="observer__login">
                 <Form.Field>
                   <Input icon={{name: 'asterisk', color: 'red'}} label="Ім'я ведучого:" type="text" value={login}
                          onChange={this.handleChange('data.login')}/>

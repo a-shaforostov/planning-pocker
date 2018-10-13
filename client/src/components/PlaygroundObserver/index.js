@@ -119,6 +119,10 @@ class PlaygroundObserver extends Component {
     this.props.newStory();
   };
 
+  stopSession = () => {
+    this.props.stopSession();
+  };
+
   render() {
     const { playground, time, issueedit, storyedit } = this.props;
     if (!playground) return null;
@@ -127,7 +131,6 @@ class PlaygroundObserver extends Component {
 
     return (
       <Fragment>
-        <div>&nbsp;</div>
         <Players />
         <History />
         <Form>
@@ -161,14 +164,17 @@ class PlaygroundObserver extends Component {
           />
           <div>&nbsp;</div>
           {
-            !playground.currentStory &&
-            <Button color="green" onClick={this.createStory}>
-              {
-                playground.state === 'sendingStory' &&
-                <Icon loading name='asterisk' />
-              }
-              Почати оцінювання
-            </Button>
+            !playground.currentStory && !playground.sessionFinished &&
+            <Fragment>
+              <Button color="green" onClick={this.createStory}>
+                {
+                  playground.state === 'sendingStory' &&
+                  <Icon loading name='asterisk' />
+                }
+                Почати оцінювання
+              </Button>
+              <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
+            </Fragment>
           }
         </Form>
 
@@ -209,11 +215,25 @@ class PlaygroundObserver extends Component {
           <Fragment>
             <div>Історія оцінена. Результат: <Label>{playground.currentStory.result}</Label></div>
             <div>&nbsp;</div>
+          </Fragment>
+        }
+
+        {/* Керування сесією */}
+        {
+          playground.currentStory && playground.currentStory.result && !playground.sessionFinished &&
+          <Fragment>
             <div>
               <Button color="blue" onClick={this.newStory}>Наступна історія</Button>
-              <Button color="red" onClick={this.finishSession}>Закрити сесію</Button>
+              <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
             </div>
           </Fragment>
+        }
+        {
+          playground.sessionFinished &&
+          <div>
+            <div>&nbsp;</div>
+            Сесія закрита. Для створення нової сесії оновіть сторінку.
+          </div>
         }
       </Fragment>
     )
@@ -233,6 +253,7 @@ export default connect(
     setTime: signal`setTime`,
     finishStory: signal`finishStory`,
     newStory: signal`newStory`,
+    stopSession: signal`stopSession`,
   },
   PlaygroundObserver,
 );
