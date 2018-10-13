@@ -129,6 +129,10 @@ class PlaygroundObserver extends Component {
     this.props.stopSession();
   };
 
+  showStats = () => {
+    this.props.showStats({ visible: true });
+  };
+
   render() {
     const { playground, time, issueedit, storyedit, jira } = this.props;
     if (!playground) return null;
@@ -241,6 +245,7 @@ class PlaygroundObserver extends Component {
           <div>
             <div>&nbsp;</div>
             Сесія закрита. Для створення нової сесії оновіть сторінку.
+            <Button fluid color="blue" onClick={this.showStats}>Переглянути статистику...</Button>
           </div>
         }
       </Fragment>
@@ -264,6 +269,7 @@ export default connect(
     newStory: signal`newStory`,
     revoteStory: signal`revoteStory`,
     stopSession: signal`stopSession`,
+    showStats: signal`showStats`,
   },
   PlaygroundObserver,
 );

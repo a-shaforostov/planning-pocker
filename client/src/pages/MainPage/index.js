@@ -10,6 +10,7 @@ import { Grid, Button, Form, Input, Label, Message, Segment } from 'semantic-ui-
 
 import MarksEditor from '../../components/MarksEditor';
 import PlaygroundObserver from '../../components/PlaygroundObserver';
+import Stats from '../../components/Stats';
 
 import './MainPage.css';
 
@@ -77,6 +78,7 @@ class MainPage extends Component {
             <PlaygroundObserver />
           </Segment>
         </Grid.Column>
+        <Stats />
       </Grid>
     )
   }

@@ -48,6 +48,7 @@ export default ({ app }) => {
           pass: 'monfri35a',
         },
         playground: null,
+        statsVisible: false,
       },
     },
     signals: {
@@ -71,6 +72,7 @@ export default ({ app }) => {
       newStory: sequences.newStory,
       revoteStory: sequences.revoteStory,
       switchStory: sequences.switchStory,
+      showStats: sequences.showStats,
     },
   }
 };
