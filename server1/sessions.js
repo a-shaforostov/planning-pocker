@@ -201,6 +201,12 @@ class Sessions extends EventEmitter {
     if (story.players.every(p => p.mark !== false)) {
       // Всі проголосували
       story.finish = new Date().getTime();
+
+      // Якщо всі оцінки однакові - прийняти іх за результат
+      const marks = story.players.reduce((marks, player) => ({ ...marks, [player.mark]: true }), {});
+      if (Object.keys(marks).length === 1) {
+        story.result = Object.keys(marks)[0]
+      }
     }
   }
 
