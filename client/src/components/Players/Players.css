@@ -1,0 +1,18 @@
+.players__list {
+    position: absolute;
+    top: 0;
+    left: -140px;
+    text-align: left;
+}
+
+.player__rail {
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.players__rail {
+    margin: 0!important;
+    width: 170px!important;
+}

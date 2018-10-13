@@ -23,7 +23,6 @@ class MarksEditor extends Component {
   };
 
   addMark = () => {
-    console.log('parseFloat(this.props.editor)', parseFloat(this.props.editor));
     const { editor } = this.props;
     if (isNaN(parseFloat(editor)) || Number(editor) != editor) {
       alert('Використовуйте тільки числові значення');
@@ -37,8 +36,8 @@ class MarksEditor extends Component {
     const { marks, editor, disabled } = this.props;
 
     return (
-      <div>
-        &nbsp;
+      <div className="marks__editor__wrapper">
+        {/*&nbsp;*/}
         <div><b>Доступні оцінки:</b></div>
         {
           marks.map((mark, index) => (

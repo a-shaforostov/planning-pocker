@@ -2,7 +2,10 @@ import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { formatTime } from '../../app/helpers';
-import {Button, Label, Form, TextArea, Icon, Table} from 'semantic-ui-react';
+import {Button, Label, Form, TextArea, Icon, Table, Segment } from 'semantic-ui-react';
+
+import History from '../../components/History';
+import Players from '../../components/Players';
 
 let timerId;
 
@@ -50,22 +53,6 @@ const playersInGame = (props) => {
         }
         </Table.Body>
       </Table>
-    </Fragment>
-  )
-};
-
-const playersList = (props) => {
-  const { playground: { players }, login } = props;
-  return (
-    <Fragment>
-      <span>
-        <strong>Список гравців: </strong>
-        {
-          players.map(p => (
-            <span key={p} style={login === p ? {color: 'blue', fontWeight: 700} : {}}>{p}, </span>
-          ))
-        }
-      </span>
     </Fragment>
   )
 };
@@ -141,8 +128,8 @@ class PlaygroundObserver extends Component {
     return (
       <Fragment>
         <div>&nbsp;</div>
-        <p><b>Ведучий:</b> {playground.observer}</p>
-        { playersList(this.props) }
+        <Players />
+        <History />
         <Form>
           {
             !playground.currentStory &&

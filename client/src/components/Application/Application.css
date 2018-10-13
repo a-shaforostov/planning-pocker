@@ -4,3 +4,7 @@
     margin: 0 auto;
     width: 500px;
 }
+
+h1 {
+    margin-top: 10px!important;
+}

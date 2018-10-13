@@ -47,7 +47,7 @@ module.exports = wss => {
       return ws.send(JSON.stringify({
         action: 'errorMessage',
         payload: {
-          message: 'Не вдалося опублікувати історію',
+          message: 'Не вдалося опублікувати історію. ',
           reason: err.message,
         },
       }));
@@ -64,7 +64,7 @@ module.exports = wss => {
         ws.send(JSON.stringify({
           action: 'errorMessage',
           payload: {
-            message: 'Не вдалося отримати історію з Jira',
+            message: 'Не вдалося отримати історію з Jira. ',
             reason: err.message,
           },
         }));
@@ -138,7 +138,7 @@ module.exports = wss => {
   function sendSessionClosed(sessionId) {
     const s = sessions.getSession(sessionId);
     const response = {
-      message: 'Сесію закрито, скористайтеся іншим посиланням або знайдіть іншу забавку.',
+      message: 'Сесію закрито. Перейдіть в іншу сесію або знайдіть іншу забавку.',
     };
     [s.observer, ...s.players].forEach(user => {
       const ws = sessions.connections[user.connectionId];

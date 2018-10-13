@@ -6,7 +6,7 @@
 import React, { Component } from "react";
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
-import { Button, Form, Input, Label } from 'semantic-ui-react'
+import { Button, Form, Input, Label, Grid, Segment } from 'semantic-ui-react'
 
 import PlaygroundPlayer from '../../components/PlaygroundPlayer';
 
@@ -26,40 +26,44 @@ class MainPage extends Component {
     const url = `${window.location.origin}/${sessionId}`;
     return (
       page === 'session' &&
-      <div className="container">
-        {
-          sessionId &&
-          <div>Сесія: {sessionId}</div>
-        }
-        <span>&nbsp;</span>
-        {
-          !auth &&
-          <Form>
-            <Form.Field>
-              <Input
-                label="Ім'я гравця:"
-                icon={{name: 'asterisk', color: 'red'}}
-                type="text"
-                value={login}
-                onChange={this.handleChange('data.login')}
-              />
-            </Form.Field>
+      <Grid centered>
+        <Grid.Column>
+          <Segment>
+            {
+              sessionId &&
+              <div>Сесія: {sessionId}</div>
+            }
             <span>&nbsp;</span>
-          </Form>
-        }
-        {
-          !auth &&
-          <Button color="green" disabled={!isConnected || !login} onClick={this.handleJoinSession}>Приєднатися до сесії</Button>
-        }
-        {
-          error &&
-          <div className="error" style={{ color: 'red' }}>{error}</div>
-        }
-        {
-          auth &&
-          <PlaygroundPlayer />
-        }
-      </div>
+            {
+              !auth &&
+              <Form>
+                <Form.Field>
+                  <Input
+                    label="Ім'я гравця:"
+                    icon={{name: 'asterisk', color: 'red'}}
+                    type="text"
+                    value={login}
+                    onChange={this.handleChange('data.login')}
+                  />
+                </Form.Field>
+                <span>&nbsp;</span>
+              </Form>
+            }
+            {
+              !auth &&
+              <Button color="green" disabled={!isConnected || !login} onClick={this.handleJoinSession}>Приєднатися до сесії</Button>
+            }
+            {
+              error &&
+              <div className="error" style={{ color: 'red' }}>{error}</div>
+            }
+            {
+              auth &&
+              <PlaygroundPlayer />
+            }
+          </Segment>
+        </Grid.Column>
+      </Grid>
     );
   }
 }

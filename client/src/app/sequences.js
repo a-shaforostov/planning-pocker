@@ -1,9 +1,9 @@
-// import { resetForm } from '@cerebral/forms/operators';
 import { props, state } from 'cerebral/tags';
 import * as factories from "./factories";
 import * as actions from "./actions";
 import { set } from 'cerebral/factories'
 
+/* Routes */
 export const rootRouted = [
   set(state`data.page`, 'main'),
   set(state`data.isObserver`, false),
@@ -20,57 +20,23 @@ export const playerRouted = [
   set(state`data.token`, null),
 ];
 
-export const createSession = [
-  actions.createSession,
-];
-
-export const joinSession = [
-  actions.joinSession,
-];
-
+/* Загальні послідовності */
+export const updateIsConnected = set(state`data.isConnected`, props`value`);
 export const updateField = set(state`${props`path`}`, props`value`);
-
 export const updateMark = set(state`data.marks.editor`, props`value`);
 export const addMark = actions.addMark;
 export const removeMark = actions.removeMark;
-
-export const serverMessage = [
-  actions.serverMessage,
-];
-
-export const createStory = actions.createStory;
-export const createStoryFromJira = actions.createStoryFromJira;
-export const setTime = set(state`time`, props`time`);
-export const giveMark = actions.giveMark;
-export const finishStory = actions.finishStory;
-export const newStory = actions.newStory;
 export const switchStory = actions.switchStory;
 
-export const updateIsConnected = set(state`data.isConnected`, props`value`);
+/* Отримання повідомлень з сервера */
+export const serverMessage = actions.serverMessage;
 
-
-// /* Routes */
-// export const rootRouted = factories.openRoute('root');
-// export const gameRouted = factories.openRoute('game');
-// export const resultsRouted = factories.openRoute('results');
-//
-// /* Marks application as loaded */
-// export const applicationLoaded = [
-//   set(state`isApplicationLoaded`, true),
-//   wait(pageTransitionDelay),
-//   when(state`initialPage`),
-//   {
-//     true: set(state`currentPage`, state`initialPage`),
-//     false: [],
-//   },
-// ];
-//
-// /* Form processing */
-// export const showModal = set(state`env.${props`name`}.edit`, props`show`);
-// export const updateName = actions.updateName;
-// export const resetEditForm = resetForm(state`${props`form`}`);
-//
-// /* Game navigation */
-// export const newGame = actions.newGame;
-// export const newTurn = actions.newTurn;
-// export const start = actions.start;
+/* Відправлення повідомлень на сервер */
+export const createSession = factories.messageHandlerFactory([actions.createSession]);
+export const joinSession = factories.messageHandlerFactory([actions.joinSession]);
+export const createStory = factories.messageHandlerFactory([actions.createStory]);
+export const createStoryFromJira = factories.messageHandlerFactory([actions.createStoryFromJira]);
+export const setTime = factories.messageHandlerFactory([set(state`time`, props`time`)]);
+export const giveMark = factories.messageHandlerFactory([actions.giveMark]);
+export const finishStory = factories.messageHandlerFactory([actions.finishStory]);
+export const newStory = factories.messageHandlerFactory([actions.newStory]);

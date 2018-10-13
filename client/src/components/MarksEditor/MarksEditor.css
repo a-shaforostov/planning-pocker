@@ -15,4 +15,6 @@
     background-color: red;
 }
 
-
+.marks__editor__wrapper {
+    margin: 10px 0;
+}

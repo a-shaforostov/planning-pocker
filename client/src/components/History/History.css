@@ -1,9 +1,7 @@
 .history__list {
-    position: absolute;
-    top: 0;
-    right: -140px;
-    width: 120px;
-    text-align: center;
+    width: 170px!important;
+    text-align: left;
+    margin: 0!important;
 }
 
 .history__button {

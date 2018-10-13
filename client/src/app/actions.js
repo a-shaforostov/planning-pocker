@@ -1,5 +1,6 @@
 import * as wsHandlers from './wsHandlers';
-import {set} from "cerebral/factories";
+import { set } from "cerebral/factories";
+import { setError } from "./helpers";
 
 export const ws = {
   comp: null,
@@ -62,6 +63,10 @@ export function serverMessage(context) {
 }
 
 export function createStory({ state, props }) {
+  if (!props.story) {
+    setError({ state, props: { error: 'Текст історії не заповнений' } });
+    return;
+  }
   ws.comp.send(JSON.stringify({
     action: 'createStory',
     payload: {
@@ -74,6 +79,10 @@ export function createStory({ state, props }) {
 }
 
 export function createStoryFromJira({ state, props }) {
+  if (!props.story) {
+    setError({ state, props: { error: 'Історія не заповнена' } });
+    return;
+  }
   ws.comp.send(JSON.stringify({
     action: 'createStoryFromJira',
     payload: {
