@@ -7,6 +7,8 @@ import {Button, Label, Form, TextArea, Icon, Table, Segment } from 'semantic-ui-
 import History from '../../components/History';
 import Players from '../../components/Players';
 
+import './PlaygroundObserver.css';
+
 let timerId;
 
 const playersInGame = (props) => {
@@ -227,11 +229,11 @@ class PlaygroundObserver extends Component {
         {
           playground.currentStory && playground.currentStory.result && !playground.sessionFinished &&
           <Fragment>
-            <div>
-              <Button color="blue" onClick={this.newStory}>Наступна історія</Button>
-              <Button color="orange" onClick={this.revoteStory}>Переголосувати</Button>
-              <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
-            </div>
+            <Button.Group>
+              <Button className="control__button" color="blue" onClick={this.newStory}>Наступна історія</Button>
+              <Button className="control__button" color="orange" onClick={this.revoteStory}>Переголосувати</Button>
+              <Button className="control__button" color="red" onClick={this.stopSession}>Закрити сесію</Button>
+            </Button.Group>
           </Fragment>
         }
         {

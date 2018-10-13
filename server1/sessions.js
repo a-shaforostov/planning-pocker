@@ -1,3 +1,4 @@
+const { getPlayers, getAvgTimes, mostDifferent, varStories } = require('./helpers');
 const uuidv1 = require('uuid/v1');
 const sha1 = require('sha1');
 const EventEmitter = require('events');
@@ -34,20 +35,19 @@ class Sessions extends EventEmitter {
   }
 
   stopSession(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
+    const s = this.getSession(opt.sessionId);
+
     if (s.observer.token === opt.token) {
       s.sessionFinished = new Date().getTime();
+      this.calcStats(s);
       this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
     } else {
-      throw new Error('Користувач не має права на керування до сесією')
+      throw new Error('Користувач не має прав керувати сесією')
     }
   }
 
   newStory(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     if (s.observer.token !== opt.token) {
       throw new Error('Користувач не має прав керувати сесією');
@@ -57,10 +57,7 @@ class Sessions extends EventEmitter {
   }
 
   createStory(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     if (s.observer.token !== opt.token) {
       throw new Error('Користувач не має прав керувати сесією');
@@ -86,10 +83,7 @@ class Sessions extends EventEmitter {
   }
 
   revoteStory(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     if (s.observer.token !== opt.token) {
       throw new Error('Користувач не має прав керувати сесією');
@@ -109,10 +103,7 @@ class Sessions extends EventEmitter {
   }
 
   createStoryFromJira(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     const url = `${s.observer.jira.url}/rest/api/latest/issue/${opt.issue}`;
     const auth = s.observer.jira.auth;
@@ -143,10 +134,7 @@ class Sessions extends EventEmitter {
   }
 
   updateIssue(sessionId, story) {
-    const s = this.pool.find(s => s.id === sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(sessionId);
 
     const url = `${s.observer.jira.url}/rest/api/latest/issue/${story.issue}`;
     const auth = s.observer.jira.auth;
@@ -184,10 +172,7 @@ class Sessions extends EventEmitter {
   }
 
   giveMark(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     const story = s.currentStory;
     const user = story.players.find(p => p.connectionId === connectionId);
@@ -211,10 +196,7 @@ class Sessions extends EventEmitter {
   }
 
   finishStory(connectionId, opt) {
-    const s = this.pool.find(s => s.id === opt.sessionId);
-    if (!s) {
-      throw new Error('Сесію не знайдено');
-    }
+    const s = this.getSession(opt.sessionId);
 
     if (s.observer.token !== opt.token) {
       throw new Error('Користувача не має прав керувати сесією');
@@ -227,10 +209,7 @@ class Sessions extends EventEmitter {
   }
 
   joinSession(connectionId, opt) {
-    const session = this.pool.find(s => s.id === opt.sessionId);
-    if (!session) {
-      throw new Error('Сесію не знайдено');
-    }
+    const session = this.getSession(opt.sessionId);
 
     const user = session.players.find(p => p.login === opt.login);
     if (user) {
@@ -246,24 +225,27 @@ class Sessions extends EventEmitter {
   }
 
   deleteSession(id) {
-    const s = this.pool.find(s => s.id === id);
-    if (s) {
-      this.pool = this.pool.filter(s => s.id !== id);
-      const connection = this.connections[s.observer.connectionId];
+    const s = this.getSession(id);
+
+    this.pool = this.pool.filter(s => s.id !== id);
+    const connection = this.connections[s.observer.connectionId];
+    if (connection) {
+      connection.close(1001, 'Сесію закрито');
+    }
+    s.players.forEach(p => {
+      const connection = this.connections[p.connectionId];
       if (connection) {
         connection.close(1001, 'Сесію закрито');
       }
-      s.players.forEach(p => {
-        const connection = this.connections[p.connectionId];
-        if (connection) {
-          connection.close(1001, 'Сесію закрито');
-        }
-      })
-    }
+    })
   }
 
   getSession(id) {
-    return this.pool.find(item => item.id === id);
+    const s = this.pool.find(item => item.id === id);
+    if (!s) {
+      throw new Error('Сесію не знайдено');
+    }
+    return s;
   }
 
   getPublicSession(id) {
@@ -278,6 +260,19 @@ class Sessions extends EventEmitter {
       sessionStarted: s.sessionStarted,
       sessionFinished: s.sessionFinished,
       state: s.state,
+      stats: s.stats,
+    }
+  }
+
+  calcStats(session) {
+    const players = getPlayers(session);
+    const avgTimes = getAvgTimes(players);
+    const mostVariablePlayer = mostDifferent(players);
+    const mostVariableStories = varStories(session);
+    session.stats = {
+      avgTimes,
+      mostVariablePlayer,
+      mostVariableStories,
     }
   }
 
