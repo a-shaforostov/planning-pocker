@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN REACT_APP_HOST=192.168.0.83 npm run build
+RUN npm run build
 RUN echo REACT_APP_HOST - %REACT_APP_HOST%
 RUN set
 

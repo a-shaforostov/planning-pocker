@@ -16,6 +16,7 @@ services:
     environment:
       - REACT_APP_HOST1=ws_server
       - REACT_APP_HOST=${ws_server}
+      - REACT_APP_HOST2=http://192.168.0.83
     expose:
       - 3001
     ports:
