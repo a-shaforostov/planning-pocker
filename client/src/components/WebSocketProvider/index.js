@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import Websocket from 'react-websocket';
+import config from '../../app/config';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { ws } from '../../app/actions';
@@ -12,7 +12,8 @@ class WebSocketProvider extends Component {
 
   componentDidMount() {
     const self = this;
-    ws.comp = new WebSocket("ws://localhost:3002");
+    const { host, port } = config.wsServer;
+    ws.comp = new WebSocket(`ws://${host}:${port}`);
 
     ws.comp.onerror = (err) => {
       console.log(err)
