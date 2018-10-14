@@ -4,4 +4,4 @@ export default {
     port: '3002',
   },
 }
-console.log('process.env.REACT_APP_HOST', process.env.REACT_APP_HOST);
+console.log('process.env.REACT_APP_HOST', process.env);
