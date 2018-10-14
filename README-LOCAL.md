@@ -23,4 +23,4 @@
 - *npm start*
 
 В браузері: 
-- *localhost:3001*
+- *localhost:8080*

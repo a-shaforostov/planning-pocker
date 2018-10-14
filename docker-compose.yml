@@ -17,7 +17,7 @@ services:
         REACT_APP_HOST: 192.168.0.83
 
     expose:
-      - 3001
+      - 8080
     ports:
-      - 3001:3001
-    command: cd build && npx http-server -p 3001
+      - 8080:8080
+    command: cd build && npx http-server
