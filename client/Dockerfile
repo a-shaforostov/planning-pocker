@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 
 RUN npm run build
-RUN echo REACT_APP_HOST - %REACT_APP_HOST%
+RUN echo REACT_APP_HOST - %REACT_APP_HOST2% {REACT_APP_HOST2} ${REACT_APP_HOST2}
 RUN set
 
 
