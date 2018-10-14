@@ -11,7 +11,7 @@ COPY . .
 RUN echo REACT_APP_HOST - ${REACT_APP_HOST2}
 RUN VARRR=kdsahfjkasdjf
 RUN set
-RUN npm run build
+RUN REACT_APP_HOST=ws_server npm run build
 
 
 

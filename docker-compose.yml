@@ -5,10 +5,6 @@ services:
   server:
     build: ./server
     container_name: ws_server
-    environment:
-      - REACT_APP_HOST1
-      - REACT_APP_HOST
-      - REACT_APP_HOST2
     expose:
       - 3002
     ports:
