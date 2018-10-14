@@ -1,6 +1,6 @@
 export default {
   wsServer: {
-    host: process.env.REACT_APP_HOST,
+    host: process.env.REACT_APP_HOST || 'localhost',
     port: '3002',
   },
 }

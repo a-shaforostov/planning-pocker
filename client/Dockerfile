@@ -8,10 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN echo REACT_APP_HOST - ${REACT_APP_HOST2}
-RUN VARRR=kdsahfjkasdjf
-RUN set
-RUN REACT_APP_HOST=ws_server npm run build
+RUN npm run build
 
 
 

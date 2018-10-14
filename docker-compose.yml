@@ -4,7 +4,6 @@ services:
 
   server:
     build: ./server
-    container_name: ws_server
     expose:
       - 3002
     ports:
@@ -13,13 +12,8 @@ services:
 
   client:
     build: ./client
-    environment:
-    environment:
-      - REACT_APP_HOST=ws_server
     expose:
       - 3001
     ports:
       - 3001:3001
-    links:
-      - server
     command: npx http-server build -p 3001
