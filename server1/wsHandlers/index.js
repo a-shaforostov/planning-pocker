@@ -156,10 +156,6 @@ module.exports = wss => {
     const ps = sessions.getPublicSession(sessionId);
     [s.observer, ...s.players].forEach(user => {
       const ws = sessions.connections[user.connectionId];
-      // if (!ws) {
-      //   delete sessions.connections[user.connectionId];
-      //   return;
-      // }
       ws.send(JSON.stringify({
         action: 'sendSessionState',
         payload: ps,

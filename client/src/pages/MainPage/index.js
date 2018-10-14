@@ -48,33 +48,58 @@ class MainPage extends Component {
               </Message>
             }
             {
-              !sessionId &&
-              <Form className="observer__login">
-                <Form.Field>
-                  <Input icon={{name: 'asterisk', color: 'red'}} label="Ім'я ведучого:" type="text" value={login}
-                         onChange={this.handleChange('data.login')}/>
-                </Form.Field>
-                <div><b>Інтеграція з Jira:</b></div>
-                <Form.Field>
-                  <Input label="Jira url:" type="text" value={jira.url} onChange={this.handleChange('data.jira.url')}/>
-                </Form.Field>
-                <Form.Field>
-                  <Input label="Логін:" type="text" value={jira.login} onChange={this.handleChange('data.jira.login')}/>
-                </Form.Field>
-                <Form.Field>
-                  <Input className="pass__input" label="Пароль:" type="password" value={jira.pass}
-                         onChange={this.handleChange('data.jira.pass')}/>
-                </Form.Field>
-              </Form>
+              isConnected &&
+              <Fragment>
+                {
+                  !sessionId &&
+                  <Form className="observer__login">
+                    <Form.Field>
+                      <Input icon={{name: 'asterisk', color: 'red'}} label="Ім'я ведучого:" type="text" value={login}
+                             onChange={this.handleChange('data.login')}/>
+                    </Form.Field>
+                    <div><b>Інтеграція з Jira:</b></div>
+                    <Form.Field>
+                      <Input label="Jira url:" type="text" value={jira.url} onChange={this.handleChange('data.jira.url')}/>
+                    </Form.Field>
+                    <Form.Field>
+                      <Input label="Логін:" type="text" value={jira.login} onChange={this.handleChange('data.jira.login')}/>
+                    </Form.Field>
+                    <Form.Field>
+                      <Input className="pass__input" label="Пароль:" type="password" value={jira.pass}
+                             onChange={this.handleChange('data.jira.pass')}/>
+                    </Form.Field>
+                  </Form>
+                }
+
+                <MarksEditor disabled={!!sessionId} />
+              </Fragment>
             }
-
-            <MarksEditor disabled={!!sessionId} />
-
             {
               !sessionId && isConnected &&
               <Fragment>
-                <Button fluid onClick={this.handleStartSession} color="blue" disabled={!login}>Створити сесію</Button>
-                <div style={{textAlign: 'center', margin: '5px 0'}}>або</div>
+                <Button.Group fluid>
+                  <Button onClick={this.handleStartSession} color="blue" disabled={!login}>Створити сесію</Button>
+                  <Button.Or text='або' />
+                  <input
+                    accept="application/json"
+                    className="input__file"
+                    id="button-data-load"
+                    type="file"
+                    onChange={this.handleLoadData}
+                    hidden
+                  />
+                  <label htmlFor="button-data-load">
+                    <Button icon color="green" as="span">
+                      &nbsp;&nbsp;&nbsp;&nbsp;<Icon name="folder open" />&nbsp;&nbsp;
+                      Завантажити сесію
+                    </Button>
+                  </label>
+                </Button.Group>
+              </Fragment>
+            }
+            {
+              !isConnected &&
+              <Fragment>
                 <input
                   accept="application/json"
                   className="input__file"
@@ -83,9 +108,9 @@ class MainPage extends Component {
                   onChange={this.handleLoadData}
                   hidden
                 />
-                <label htmlFor="button-data-load">
-                  <Button icon fluid color="green" as="span">
-                    <Icon name="folder open" />&nbsp;&nbsp;
+                <label htmlFor="button-data-load" style={{ width: '100%' }}>
+                  <Button fliud icon color="green" as="span" style={{ display: 'block' }}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<Icon name="folder open" />&nbsp;&nbsp;
                     Завантажити сесію
                   </Button>
                 </label>

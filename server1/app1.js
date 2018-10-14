@@ -30,7 +30,6 @@ wss.on('connection', (ws) => {
   ws.on('message', processMessage);
   ws.on('close', function (code) {
     sessions.removeConnection(this.id);
-    console.log(sessions.getConnectionsSize());
   });
 });
 

@@ -26,7 +26,6 @@ export default ({ app }) => {
     }
   }
 
-
   return {
     state: {
       data: {

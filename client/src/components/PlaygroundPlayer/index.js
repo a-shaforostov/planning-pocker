@@ -46,7 +46,7 @@ const playersInGame = (props, finished) => {
 };
 
 const playersList = (props) => {
-  const { playground: { players }, login } = props;
+  const { playground: { players = [] }, login } = props;
   return (
     <Fragment>
       <b>Список гравців: </b>

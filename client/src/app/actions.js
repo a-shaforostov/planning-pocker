@@ -72,8 +72,8 @@ export function removeMark({ state, props }) {
 
 export function serverMessage(context) {
   const { action, payload } = context.props;
-  wsHandlers[action](context, payload);
   context.state.set(`data.playground.state`, '-stable-');
+  wsHandlers[action](context, payload);
 }
 
 export function createStory({ state, props }) {
@@ -203,4 +203,5 @@ export async function loadFile({ state, props }) {
   }
 
   state.set('data', dataObj);
+  state.set('isLoaded', true);
 }

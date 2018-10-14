@@ -46,7 +46,7 @@ class Sessions extends EventEmitter {
 
     s.sessionFinished = new Date().getTime();
     this.calcStats(s);
-    this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
+    // this.emit('sessionFinished', { sessionId: s.id, time: s.sessionFinished });
   }
 
   newStory(connectionId, opt) {
@@ -136,7 +136,7 @@ class Sessions extends EventEmitter {
   }
 
   updateIssue(sessionId, story) {
-    if (story.result === '?') return Promise.resolve();
+    if (story.result === '?' || !story.issue) return Promise.resolve();
     const s = this.getSession(sessionId);
 
     const url = `${s.observer.jira.url}/rest/api/latest/issue/${story.issue}`;
@@ -278,11 +278,16 @@ class Sessions extends EventEmitter {
       this.deleteSession(id);
     }
 
-    // if player - remove it from session
+    // Якщо це гравець
     this.pool.forEach(s => {
       const p = s.players.find(p => p.connectionId === id);
       if (p) {
+        // Видалити його з сесії
         s.players = s.players.filter(p => p.connectionId !==id);
+        // Якщо історія на етапі оцінки і ще не оцінена цим гравцем - видалити його з історії
+        if (s.currentStory) {
+          s.currentStory.players = s.currentStory.players.filter(p => p.connectionId !== id || p.mark);
+        }
         this.emit('connectionsUpdated', { sessionId: s.id })
       }
     })

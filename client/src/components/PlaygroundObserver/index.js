@@ -137,16 +137,18 @@ class PlaygroundObserver extends Component {
     e.preventDefault();
     const { data, sessionId } = this.props;
     if (data) {
-      const uri = "data:application/json,"+encodeURIComponent(JSON.stringify(data));
+      const uri = "data:application/json,"+encodeURIComponent(JSON.stringify({
+        ...data,
+        token: '',
+        jira: {},
+      }));
       this.props.downloadFile({ data: uri, filename: `${sessionId}.json` });
     }
   };
 
   render() {
-    const { playground, time, issueedit, storyedit, jira } = this.props;
+    const { playground, time, issueedit, storyedit, jira, isLoaded } = this.props;
     if (!playground) return null;
-
-    let finalMark;
 
     return (
       <Fragment>
@@ -186,14 +188,16 @@ class PlaygroundObserver extends Component {
           {
             !playground.currentStory && !playground.sessionFinished &&
             <Fragment>
-              <Button color="green" onClick={this.createStory}>
-                {
-                  playground.state === 'sendingStory' &&
-                  <Icon loading name='asterisk' />
-                }
-                Почати оцінювання
-              </Button>
-              <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
+              <Button.Group fluid>
+                <Button color="green" onClick={this.createStory}>
+                  {
+                    playground.state === 'sendingStory' &&
+                    <Icon loading name='asterisk' />
+                  }
+                  Почати оцінювання
+                </Button>
+                <Button color="red" onClick={this.stopSession}>Закрити сесію</Button>
+              </Button.Group>
             </Fragment>
           }
         </Form>
@@ -209,22 +213,15 @@ class PlaygroundObserver extends Component {
               <div><b>Остаточне оцінювання:</b></div>
             }
             {
-              finalMark &&
-              <div>
-                <Button onClick={this.finishStory(finalMark)}>Завершити з оцінкою {finalMark}</Button>
-                <div>або оберіть оцінку із запропонованих гравцями</div>
-              </div>
-            }
-            {
               playground.currentStory && playground.currentStory.finish &&
               <Fragment>
                 оберіть оцінку із запропонованих гравцями або
-                <Button onClick={this.finishStory('?')}>Завершити з невизначеним результатом</Button>
+                <Button fluid onClick={this.finishStory('?')}>Завершити з невизначеним результатом</Button>
               </Fragment>
             }
             {
               playground.currentStory && !playground.currentStory.finish &&
-              <Button onClick={this.finishStory('?')}>Завершити достроково з невизначеним результатом</Button>
+              <Button fluid onClick={this.finishStory('?')}>Завершити достроково з невизначеним результатом</Button>
             }
           </Fragment>
         }
@@ -242,7 +239,7 @@ class PlaygroundObserver extends Component {
         {
           playground.currentStory && playground.currentStory.result && !playground.sessionFinished &&
           <Fragment>
-            <Button.Group>
+            <Button.Group fluid>
               <Button className="control__button" color="blue" onClick={this.newStory}>Наступна історія</Button>
               <Button className="control__button" color="orange" onClick={this.revoteStory}>Переголосувати</Button>
               <Button className="control__button" color="red" onClick={this.stopSession}>Закрити сесію</Button>
@@ -254,8 +251,13 @@ class PlaygroundObserver extends Component {
           <div>
             <div>&nbsp;</div>
             Сесія закрита. Для створення нової сесії оновіть сторінку.
-            <Button color="blue" onClick={this.showStats}>Переглянути статистику...</Button>
-            <Button icon color="green" onClick={this.downloadFile}><Icon name="save" />Зберегти сесію</Button>
+            <Button.Group fluid>
+              <Button color="blue" onClick={this.showStats}>Переглянути статистику...</Button>
+              <Button icon color="green" disabled={isLoaded} onClick={this.downloadFile}>
+                <Icon name="save" />
+                &nbsp;&nbsp;Зберегти сесію
+              </Button>
+            </Button.Group>
           </div>
         }
       </Fragment>
@@ -266,6 +268,7 @@ class PlaygroundObserver extends Component {
 export default connect(
   {
     data: state`data`,
+    isLoaded: state`isLoaded`,
     playground: state`data.playground`,
     issueedit: state`data.issueedit`,
     storyedit: state`data.storyedit`,
