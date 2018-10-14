@@ -8,6 +8,7 @@ RUN npm install
 
 COPY . .
 
+RUN set
 RUN npm run build
 
 
