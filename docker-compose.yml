@@ -14,7 +14,8 @@ services:
   client:
     build: ./client
     environment:
-      - REACT_APP_HOST=ws_server
+      - REACT_APP_HOST1=ws_server
+      - REACT_APP_HOST=${ws_server}
     expose:
       - 3001
     ports:
