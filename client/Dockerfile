@@ -27,6 +27,6 @@ COPY --from=base /app/build ./build/
 
 EXPOSE 8080
 
-ENTRYPOINT ["npx"]
+ENTRYPOINT ["npm"]
 
-CMD ["http-server", "build"]
+CMD ["start"]
