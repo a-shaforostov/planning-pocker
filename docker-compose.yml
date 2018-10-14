@@ -4,6 +4,7 @@ services:
 
   server:
     build: ./server
+    container_name: ws_server
     expose:
       - 3002
     ports:
@@ -12,6 +13,8 @@ services:
 
   client:
     build: ./client
+    environment:
+      - REACT_APP_HOST=ws_server
     expose:
       - 3001
     ports:
