@@ -11,9 +11,11 @@ services:
     command: node app.js
 
   client:
-    build: ./client
-    args:
-      - REACT_APP_HOST:${REACT_APP_HOST}
+    build:
+      context: ./client
+      args:
+        REACT_APP_HOST: ${REACT_APP_HOST}
+
     expose:
       - 3001
     ports:
