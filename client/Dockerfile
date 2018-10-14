@@ -10,7 +10,9 @@ RUN npm install
 
 COPY . .
 
+ENV REACT_APP_HOST=${REACT_APP_HOST}
 RUN echo REACT_APP_HOST = ${REACT_APP_HOST}
+RUN set
 RUN REACT_APP_HOST=${REACT_APP_HOST} npm run build
 
 

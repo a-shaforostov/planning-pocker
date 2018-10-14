@@ -14,7 +14,7 @@ services:
     build:
       context: ./client
       args:
-        REACT_APP_HOST: ${REACT_APP_HOST}
+        REACT_APP_HOST: 192.168.0.83
 
     expose:
       - 3001
