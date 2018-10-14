@@ -8,6 +8,6 @@ RUN npm install --only=production
 
 COPY . .
 
-EXPOSE 3000 3002
+EXPOSE 3002
 
-CMD ["node", "app1.js"]
+CMD ["node", "app.js"]
