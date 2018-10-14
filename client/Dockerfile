@@ -1,6 +1,6 @@
-ARG REACT_APP_HOST=192.168.0.83
-
 FROM node:10-alpine as base
+
+ARG REACT_APP_HOST=192.168.0.83
 
 WORKDIR /app
 
@@ -11,6 +11,7 @@ RUN npm install
 COPY . .
 
 RUN echo "asdfsdsdfg fsd sdfg  ${REACT_APP_HOST}"
+RUN echo "asdfsdsdfg fsd sdfg  $REACT_APP_HOST"
 RUN REACT_APP_HOST=${REACT_APP_HOST} npm run build
 
 
