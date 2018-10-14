@@ -24,7 +24,7 @@ class MarksEditor extends Component {
 
   addMark = () => {
     const { editor } = this.props;
-    if (isNaN(parseFloat(editor)) || Number(editor) != editor) {
+    if (isNaN(parseFloat(editor)) || Number(editor) != editor) { // eslint-disable-line eqeqeq
       alert('Використовуйте тільки числові значення');
       return;
     }

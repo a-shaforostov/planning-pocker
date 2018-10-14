@@ -60,9 +60,9 @@ const playersList = (props) => {
 };
 
 class PlaygroundPlayer extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount = () => {
     if (!timerId) {

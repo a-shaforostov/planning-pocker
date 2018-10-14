@@ -121,7 +121,7 @@ class MainPage extends Component {
               sessionId &&
               <div>
                 <div>Посилання для гравців:</div>
-                <a href={url} target="_blank">{url}</a>
+                <a href={url} rel="noopener noreferrer" target="_blank">{url}</a>
               </div>
             }
             <PlaygroundObserver />

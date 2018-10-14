@@ -1,5 +1,4 @@
 import * as wsHandlers from './wsHandlers';
-import { set } from "cerebral/factories";
 import { setError } from "./helpers";
 
 export const ws = {

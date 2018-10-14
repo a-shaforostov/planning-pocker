@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Websocket from 'react-websocket';
+// import Websocket from 'react-websocket';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { ws } from '../../app/actions';

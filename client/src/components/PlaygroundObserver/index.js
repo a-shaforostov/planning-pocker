@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from "@cerebral/react";
 import { state, signal } from 'cerebral/tags';
 import { formatTime } from '../../app/helpers';
-import {Button, Label, Form, TextArea, Icon, Table, Segment } from 'semantic-ui-react';
+import {Button, Label, Form, TextArea, Icon, Table } from 'semantic-ui-react';
 
 import History from '../../components/History';
 import Players from '../../components/Players';
@@ -60,9 +60,9 @@ const playersInGame = (props) => {
 };
 
 class PlaygroundObserver extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount = () => {
     if (!timerId) {

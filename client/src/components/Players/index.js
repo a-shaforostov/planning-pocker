@@ -7,7 +7,7 @@ import { Rail, Segment } from 'semantic-ui-react';
 import './Players.css';
 
 const playersList = (props) => {
-  const { playground: { players }, login } = props;
+  const { playground: { players } } = props;
   return (
     <Fragment>
       <span>
