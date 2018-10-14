@@ -21,4 +21,6 @@ services:
       - 3001
     ports:
       - 3001:3001
+    links:
+      - server
     command: npx http-server build -p 3001
