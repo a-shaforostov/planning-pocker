@@ -20,4 +20,4 @@ services:
       - 8080
     ports:
       - 8080:8080
-    command: cd build && npx http-server
+    command: sh cd build && npx http-server
