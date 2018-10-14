@@ -11,7 +11,7 @@ const playersList = (props) => {
   return (
     <Fragment>
       <span>
-        <strong>Гравці online: </strong>
+        <strong>Гравці: </strong>
         {
           players.map(p => (
             <div

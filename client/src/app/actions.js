@@ -201,6 +201,22 @@ export async function loadFile({ state, props }) {
     return;
   }
 
-  state.set('data', dataObj);
+  // В списку гравців відобразити всіх, хто оцінював історії
+  const allPlayers = {};
+  dataObj.playground.stories.forEach(story => {
+    story.players.forEach(player => {
+      allPlayers[player.login] = true;
+    });
+  });
+  const players = Object.keys(allPlayers);
+
+  state.set('data', {
+    ...dataObj,
+    playground: {
+      ...dataObj.playground,
+      players,
+    }
+  });
+
   state.set('isLoaded', true);
 }

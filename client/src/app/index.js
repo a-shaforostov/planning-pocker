@@ -41,11 +41,7 @@ export default ({ app }) => {
           items: [0, 1, 2, 3, 5, 8, '?'],
           editor: '',
         },
-        jira: {
-          url: 'http://andpr99.atlassian.net',
-          login: 'andpr99@gmail.com',
-          pass: 'zyjdcrfz',
-        },
+        jira: {},
         playground: null,
         statsVisible: false,
       },
